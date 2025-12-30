@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MalGaz-Hub 401</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
@@ -20,6 +20,8 @@
             --header-height: 60px;
             --safe-area-top: env(safe-area-inset-top, 0px);
             --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-left: env(safe-area-inset-left, 0px);
+            --safe-area-right: env(safe-area-inset-right, 0px);
         }
 
         * {
@@ -28,28 +30,38 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
         }
 
         html, body {
             height: 100%;
+            width: 100%;
             overflow: hidden;
             background-color: var(--dark-bg);
             color: var(--text-primary);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            position: fixed;
+            touch-action: pan-y;
         }
 
-        /* Interface caméra au démarrage (comme Snapchat) */
+        /* Interface caméra VERTICALE comme Snapchat */
         .camera-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            height: -webkit-fill-available;
+            height: calc(var(--vh, 1vh) * 100);
             background-color: #000;
-            z-index: 3000;
+            z-index: 4000;
             display: flex;
             flex-direction: column;
             padding-top: var(--safe-area-top);
+            padding-left: var(--safe-area-left);
+            padding-right: var(--safe-area-right);
+            padding-bottom: var(--safe-area-bottom);
+            touch-action: none;
         }
 
         .camera-container.hidden {
@@ -57,33 +69,58 @@
         }
 
         .camera-header {
-            padding: 15px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: transparent;
             z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding-top: calc(12px + var(--safe-area-top));
         }
 
         .camera-preview {
             flex: 1;
             position: relative;
             overflow: hidden;
-        }
-
-        .camera-view {
             width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .camera-view {
+            width: 100%;
+            height: 100%;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .camera-feed {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .camera-feed.portrait {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-feed.landscape {
+            width: auto;
+            height: 100%;
+            object-fit: contain;
         }
 
         .camera-feed.front {
@@ -94,49 +131,78 @@
             transform: scaleX(1);
         }
 
+        /* Contrôles caméra positionnés correctement */
         .camera-controls {
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: transparent;
             z-index: 10;
-            padding-bottom: calc(20px + var(--safe-area-bottom));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding-bottom: calc(30px + var(--safe-area-bottom));
         }
 
         .capture-btn {
-            width: 70px;
-            height: 70px;
+            width: 78px;
+            height: 78px;
             border-radius: 50%;
             background-color: white;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 20px;
-            transition: transform 0.2s;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .capture-btn:active {
             transform: scale(0.9);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .capture-btn.recording {
+            background-color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 45, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0); }
         }
 
         .camera-options {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 300px;
+            max-width: 350px;
+            position: relative;
         }
 
         .camera-option {
-            background: none;
+            background: rgba(0, 0, 0, 0.3);
             border: none;
             color: white;
-            font-size: 1.5rem;
-            padding: 10px;
-            opacity: 0.8;
-            transition: opacity 0.2s;
+            font-size: 1.3rem;
+            padding: 12px;
+            opacity: 0.9;
+            transition: all 0.2s;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
         }
 
         .camera-option:active {
             opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .switch-camera {
@@ -153,6 +219,8 @@
             color: white;
             border: none;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
         }
 
         /* Navigation bottom */
@@ -170,6 +238,8 @@
             z-index: 1000;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-bottom: var(--safe-area-bottom);
+            padding-left: var(--safe-area-left);
+            padding-right: var(--safe-area-right);
         }
 
         .nav-item {
@@ -184,6 +254,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 12px;
             min-width: 60px;
+            cursor: pointer;
         }
 
         .nav-item:hover, .nav-item:active {
@@ -221,15 +292,19 @@
             transform: scale(0.95);
         }
 
-        /* Contenu principal */
+        /* Contenu principal avec scroll snap */
         .main-content {
-            height: calc(100vh - var(--navbar-height) - var(--safe-area-bottom));
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
-            padding-bottom: 10px;
+            padding-bottom: calc(var(--navbar-height) + var(--safe-area-bottom));
             display: none;
+            width: 100%;
+            position: relative;
+            scroll-snap-type: y mandatory;
         }
 
         .main-content.active {
@@ -238,7 +313,9 @@
 
         .page {
             display: none;
-            min-height: calc(100vh - var(--navbar-height) - var(--header-height) - 20px);
+            min-height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
         }
 
         .page.active {
@@ -264,6 +341,9 @@
             height: var(--header-height);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
+            padding-top: calc(15px + var(--safe-area-top));
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
         }
 
         .logo {
@@ -295,6 +375,7 @@
             border-radius: 50%;
             transition: background 0.2s;
             position: relative;
+            cursor: pointer;
         }
 
         .header-btn:active {
@@ -340,9 +421,15 @@
             object-fit: cover;
         }
 
-        /* PAGE ACCUEIL */
+        /* PAGE ACCUEIL avec scroll snap pour les vidéos */
         #homePage {
             padding-bottom: 80px;
+            width: 100%;
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Stories améliorées */
@@ -352,6 +439,9 @@
             white-space: nowrap;
             scrollbar-width: none;
             margin-bottom: 20px;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-align: start;
         }
 
         .stories-container::-webkit-scrollbar {
@@ -428,26 +518,61 @@
             border: 2px solid var(--dark-bg);
         }
 
-        /* Feed de vidéos amélioré */
+        /* Feed de vidéos amélioré - PLEIN ÉCRAN VERTICAL avec snap */
         .video-feed {
             display: flex;
             flex-direction: column;
-            gap: 1px;
+            width: 100%;
+            scroll-snap-type: y mandatory;
         }
 
         .video-container {
             position: relative;
-            width: 100%;
+            width: 100vw;
             background-color: #000;
             overflow: hidden;
-            aspect-ratio: 9/16;
-            min-height: 85vh;
+            height: calc(var(--vh, 1vh) * 100);
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         .video-player {
             width: 100%;
             height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #000;
+        }
+
+        /* Pour les vidéos verticales */
+        .video-player.vertical {
             object-fit: cover;
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Pour les vidéos horizontales */
+        .video-player.horizontal {
+            object-fit: contain;
+            width: 100%;
+            height: auto;
+            max-height: 100%;
         }
 
         .video-overlay {
@@ -458,6 +583,12 @@
             padding: 20px 15px;
             background: linear-gradient(transparent, rgba(0,0,0,0.8));
             z-index: 10;
+            padding-bottom: calc(30px + var(--safe-area-bottom));
+            pointer-events: none;
+        }
+
+        .video-overlay * {
+            pointer-events: auto;
         }
 
         .video-info {
@@ -511,6 +642,8 @@
             font-size: 0.95rem;
             margin-bottom: 10px;
             line-height: 1.4;
+            max-height: 80px;
+            overflow-y: auto;
         }
 
         .video-tags {
@@ -550,6 +683,7 @@
             padding: 8px;
             border-radius: 50%;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
         .action-btn:active {
@@ -593,6 +727,9 @@
         /* PAGE EXPLORER */
         #explorePage {
             padding: 15px;
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
+            scroll-snap-align: start;
         }
 
         .search-bar {
@@ -618,6 +755,7 @@
             font-size: 1rem;
             flex: 1;
             outline: none;
+            width: 100%;
         }
 
         .search-input::placeholder {
@@ -728,6 +866,9 @@
         #youtubePage {
             padding: 15px;
             padding-bottom: 80px;
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
+            scroll-snap-align: start;
         }
 
         .youtube-header {
@@ -897,6 +1038,9 @@
         #gamesPage {
             padding: 15px;
             padding-bottom: 80px;
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
+            scroll-snap-align: start;
         }
 
         .games-carousel {
@@ -1031,11 +1175,15 @@
         /* PAGE PROFIL */
         #profilePage {
             padding-bottom: 80px;
+            width: 100%;
+            scroll-snap-align: start;
         }
 
         .profile-header {
             padding: 20px 15px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
         }
 
         .profile-top {
@@ -1159,6 +1307,8 @@
 
         .profile-posts {
             padding: 15px;
+            padding-left: calc(15px + var(--safe-area-left));
+            padding-right: calc(15px + var(--safe-area-right));
         }
 
         .posts-grid {
@@ -1183,10 +1333,13 @@
             width: 100%;
             height: 100%;
             background-color: var(--dark-bg);
-            z-index: 3000;
+            z-index: 5000;
             display: none;
             flex-direction: column;
             padding-top: var(--safe-area-top);
+            padding-left: var(--safe-area-left);
+            padding-right: var(--safe-area-right);
+            padding-bottom: var(--safe-area-bottom);
         }
 
         .modal.active {
@@ -1412,7 +1565,7 @@
             width: 100%;
             height: 100%;
             background: var(--dark-bg);
-            z-index: 4000;
+            z-index: 6000;
             display: none;
             flex-direction: column;
             padding-top: var(--safe-area-top);
@@ -1452,7 +1605,7 @@
             width: 100%;
             height: 100%;
             background: var(--dark-bg);
-            z-index: 5000;
+            z-index: 7000;
             display: none;
             flex-direction: column;
             padding-top: var(--safe-area-top);
@@ -1536,7 +1689,7 @@
             width: 100%;
             height: 100%;
             background: var(--dark-bg);
-            z-index: 6000;
+            z-index: 8000;
             display: none;
             flex-direction: column;
             padding-top: var(--safe-area-top);
@@ -1587,6 +1740,258 @@
             border-radius: 50%;
         }
 
+        /* MODAL MESSAGERIE */
+        .messages-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            z-index: 9000;
+            display: none;
+            flex-direction: column;
+            padding-top: var(--safe-area-top);
+        }
+
+        .messages-modal.active {
+            display: flex;
+        }
+
+        .messages-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(28, 28, 30, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .messages-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .conversations-list {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin: 15px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .conversation-item {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .conversation-item:last-child {
+            border-bottom: none;
+        }
+
+        .conversation-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+
+        .conversation-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .conversation-info {
+            flex: 1;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .conversation-last-message {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .conversation-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .unread-badge {
+            background: var(--primary-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Chat messages */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            overflow: hidden;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-user-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .chat-user-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--primary-color);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: var(--card-bg);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Bouton messagerie dans le header */
+        .messages-btn {
+            position: relative;
+        }
+
         /* Responsive */
         @media (max-width: 374px) {
             .games-grid {
@@ -1615,6 +2020,11 @@
                 left: 50%;
                 transform: translateX(-50%);
             }
+            
+            .video-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
         }
 
         /* Scrollbar personnalisée */
@@ -1626,6 +2036,49 @@
         .touch-feedback:active {
             opacity: 0.7;
         }
+
+        /* Pour iOS */
+        @supports (-webkit-touch-callout: none) {
+            .camera-container, .main-content {
+                height: -webkit-fill-available;
+            }
+            
+            .video-container {
+                height: -webkit-fill-available;
+            }
+        }
+
+        /* Orientation */
+        @media (orientation: landscape) {
+            .camera-feed {
+                width: auto;
+                height: 100%;
+            }
+        }
+
+        /* Indicateur de scroll */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: none;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -1635,7 +2088,7 @@
         <div class="spinner"></div>
     </div>
 
-    <!-- CAMÉRA AU PREMIER PLAN (comme Snapchat) -->
+    <!-- CAMÉRA VERTICALE AU PREMIER PLAN -->
     <div class="camera-container" id="cameraContainer">
         <div class="camera-header">
             <button class="camera-option" id="closeCamera">
@@ -1649,7 +2102,7 @@
         
         <div class="camera-preview">
             <div class="camera-view" id="cameraView">
-                <video class="camera-feed front" id="cameraFeed" autoplay playsinline></video>
+                <video class="camera-feed portrait" id="cameraFeed" autoplay playsinline></video>
                 <button class="switch-camera" id="switchCamera">
                     <i class="fas fa-camera-rotate"></i>
                 </button>
@@ -1678,6 +2131,10 @@
         <div class="header">
             <div class="logo">MalGaz-Hub<span>401</span></div>
             <div class="header-actions">
+                <button class="header-btn messages-btn" id="messagesBtn">
+                    <i class="fas fa-comments"></i>
+                    <span class="notification-badge"></span>
+                </button>
                 <button class="header-btn" id="searchBtn">
                     <i class="fas fa-search"></i>
                 </button>
@@ -1698,7 +2155,7 @@
                 <!-- Stories générées dynamiquement -->
             </div>
 
-            <!-- Feed de vidéos -->
+            <!-- Feed de vidéos VERTICAL -->
             <div class="video-feed" id="videoFeed">
                 <!-- Vidéos générées dynamiquement -->
             </div>
@@ -1721,7 +2178,7 @@
         </div>
     </div>
 
-    <!-- Navigation bottom SANS PROFIL -->
+    <!-- Navigation bottom -->
     <nav class="navbar">
         <a href="#" class="nav-item active" data-page="home">
             <i class="fas fa-home"></i>
@@ -1744,7 +2201,7 @@
         </a>
     </nav>
 
-    <!-- Modal pour publication amélioré -->
+    <!-- Modal pour publication -->
     <div class="modal" id="postModal">
         <div class="modal-header">
             <button class="camera-option" id="closePostModal">
@@ -1909,6 +2366,40 @@
         </div>
     </div>
 
+    <!-- Modal messagerie -->
+    <div class="messages-modal" id="messagesModal">
+        <div class="messages-header">
+            <button class="camera-option" id="closeMessages">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="color: white; font-weight: 500;">Messagerie</div>
+            <button class="camera-option" id="newMessageBtn" style="color: var(--primary-color);">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        
+        <div class="messages-content">
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations chargées dynamiquement -->
+            </div>
+            
+            <div class="chat-container" id="chatContainer" style="display: none;">
+                <div class="chat-header" id="chatHeader">
+                    <!-- En-tête du chat chargé dynamiquement -->
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages chargés dynamiquement -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Écrivez un message...">
+                    <button class="send-btn" id="sendMessageBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Vidéo en plein écran -->
     <div class="fullscreen-video" id="fullscreenVideo">
         <button class="close-fullscreen" id="closeFullscreen">
@@ -1919,12 +2410,17 @@
         </video>
     </div>
 
+    <!-- Indicateur de scroll -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <i class="fas fa-arrow-down"></i> Défilez pour voir plus
+    </div>
+
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script>
         // Configuration YouTube API
         const YOUTUBE_API_KEY = 'AIzaSyDhfy-hOznVoLMAaJnpfcw3w7r4uj0Q-zo';
         
-        // Données de l'application COMPLÈTES
+        // Données de l'application COMPLÈTES avec messagerie
         const appData = {
             currentUser: {
                 id: 1,
@@ -1996,50 +2492,6 @@
                     followers: 23400,
                     following: 450,
                     bio: "Fashion influencer 👗 • Lifestyle content"
-                },
-                {
-                    id: 6,
-                    name: "Tom Music",
-                    username: "@tom_music",
-                    avatar: null,
-                    isFollowing: false,
-                    posts: 32,
-                    followers: 17800,
-                    following: 210,
-                    bio: "Music producer 🎵 • DJ"
-                },
-                {
-                    id: 7,
-                    name: "Lena Food",
-                    username: "@lena_food",
-                    avatar: null,
-                    isFollowing: false,
-                    posts: 65,
-                    followers: 9200,
-                    following: 125,
-                    bio: "Chef & food blogger 🍳 • Recettes faciles"
-                },
-                {
-                    id: 8,
-                    name: "Chris Sports",
-                    username: "@chris_sports",
-                    avatar: null,
-                    isFollowing: false,
-                    posts: 29,
-                    followers: 15600,
-                    following: 340,
-                    bio: "Athlète professionnel 🏀 • Coach sportif"
-                },
-                {
-                    id: 9,
-                    name: "Zoe Art",
-                    username: "@zoe_art",
-                    avatar: null,
-                    isFollowing: false,
-                    posts: 47,
-                    followers: 7600,
-                    following: 98,
-                    bio: "Artiste digitale 🎨 • Illustrations"
                 }
             ],
             stories: [
@@ -2068,24 +2520,6 @@
                     createdAt: new Date(Date.now() - 4*60*60*1000),
                     seenBy: [],
                     isLive: true
-                },
-                { 
-                    id: 4, 
-                    userId: 4,
-                    type: 'image',
-                    mediaUrl: 'https://picsum.photos/400/600?random=2',
-                    createdAt: new Date(Date.now() - 6*60*60*1000),
-                    seenBy: [1, 5],
-                    isLive: false
-                },
-                { 
-                    id: 5, 
-                    userId: 5,
-                    type: 'image',
-                    mediaUrl: 'https://picsum.photos/400/600?random=3',
-                    createdAt: new Date(Date.now() - 8*60*60*1000),
-                    seenBy: [],
-                    isLive: false
                 }
             ],
             posts: [
@@ -2100,7 +2534,8 @@
                     shares: 56,
                     createdAt: new Date(Date.now() - 2*60*60*1000),
                     tags: ["gaming", "record", "stream", "esport"],
-                    location: "Paris, France"
+                    location: "Paris, France",
+                    videoOrientation: 'horizontal'
                 },
                 {
                     id: 2,
@@ -2126,7 +2561,8 @@
                     shares: 128,
                     createdAt: new Date(Date.now() - 6*60*60*1000),
                     tags: ["travel", "japan", "mountains", "adventure"],
-                    location: "Tokyo, Japan"
+                    location: "Tokyo, Japan",
+                    videoOrientation: 'horizontal'
                 },
                 {
                     id: 4,
@@ -2142,6 +2578,37 @@
                     location: "Milan, Italy"
                 }
             ],
+            // Ajout de vidéos verticales
+            verticalVideos: [
+                {
+                    id: 5,
+                    userId: 2,
+                    type: 'video',
+                    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                    caption: "Découvrez ce nouveau jeu mobile incroyable! 📱 #mobilegaming #gaming #fun",
+                    likes: 2150,
+                    comments: 89,
+                    shares: 42,
+                    createdAt: new Date(Date.now() - 1*60*60*1000),
+                    tags: ["mobile", "gaming", "fun", "gameplay"],
+                    location: "Los Angeles",
+                    videoOrientation: 'vertical'
+                },
+                {
+                    id: 6,
+                    userId: 3,
+                    type: 'video',
+                    mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                    caption: "Unboxing du nouveau MacBook Pro! 🎥 #unboxing #tech #apple",
+                    likes: 3800,
+                    comments: 156,
+                    shares: 78,
+                    createdAt: new Date(Date.now() - 3*60*60*1000),
+                    tags: ["unboxing", "tech", "apple", "macbook"],
+                    location: "Cupertino",
+                    videoOrientation: 'vertical'
+                }
+            ],
             games: [
                 {
                     id: 1,
@@ -2150,31 +2617,13 @@
                     image: "https://imgs2.dab3games.com/the-last-man-game816.png",
                     url: "https://lagged.com/games/play2/the-last-man-60104/",
                     description: "Survie contre les zombies"
-                },
-                {
-                    id: 2,
-                    title: "Car Racing 3D",
-                    category: "Course",
-                    image: "https://imgs2.dab3games.com/grand-shift-auto-ft180.png",
-                    url: "https://lagged.com/en/g/car-racing-3d",
-                    description: "Course de voitures extrême"
-                },
-                {
-                    id: 3,
-                    title: "Puzzle Master",
-                    category: "Réflexion",
-                    image: "https://imgs2.dab3games.com/ragdoll-playground-ft1017.png",
-                    url: "https://lagged.com/en/g/puzzle-master",
-                    description: "Défie ton cerveau"
                 }
             ],
             exploreCategories: [
                 { id: 1, name: "Tendances", icon: "fas fa-fire", count: "1.2K" },
                 { id: 2, name: "Musique", icon: "fas fa-music", count: "856" },
                 { id: 3, name: "Gaming", icon: "fas fa-gamepad", count: "2.4K" },
-                { id: 4, name: "Sport", icon: "fas fa-futbol", count: "732" },
-                { id: 5, name: "Mode", icon: "fas fa-tshirt", count: "543" },
-                { id: 6, name: "Cuisine", icon: "fas fa-utensils", count: "421" }
+                { id: 4, name: "Sport", icon: "fas fa-futbol", count: "732" }
             ],
             trendingPosts: [
                 { id: 1, name: "Championnat Gaming", image: "https://picsum.photos/400/300?random=8", views: "245K" },
@@ -2186,6 +2635,106 @@
             youtubeCategories: [
                 "Toutes", "Musique", "Gaming", "Sport", "Actualités", 
                 "Cuisine", "Tech", "Fitness", "Éducation", "Divertissement"
+            ],
+            // Données de messagerie
+            conversations: [
+                {
+                    id: 1,
+                    userId: 2,
+                    lastMessage: "Salut! Tu as vu ma dernière vidéo?",
+                    lastMessageTime: new Date(Date.now() - 30*60*1000),
+                    unread: 2,
+                    messages: [
+                        {
+                            id: 1,
+                            senderId: 2,
+                            text: "Salut! Comment ça va?",
+                            time: new Date(Date.now() - 2*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 2,
+                            senderId: 1,
+                            text: "Ça va bien merci! Et toi?",
+                            time: new Date(Date.now() - 1.5*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 3,
+                            senderId: 2,
+                            text: "Super! Tu as vu ma dernière vidéo?",
+                            time: new Date(Date.now() - 1*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 4,
+                            senderId: 2,
+                            text: "Salut! Tu as vu ma dernière vidéo?",
+                            time: new Date(Date.now() - 30*60*1000),
+                            read: false
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    userId: 3,
+                    lastMessage: "Le nouveau smartphone est incroyable!",
+                    lastMessageTime: new Date(Date.now() - 2*60*60*1000),
+                    unread: 0,
+                    messages: [
+                        {
+                            id: 1,
+                            senderId: 3,
+                            text: "Salut! J'ai testé le nouveau smartphone",
+                            time: new Date(Date.now() - 3*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 2,
+                            senderId: 1,
+                            text: "Ah bon? Il est comment?",
+                            time: new Date(Date.now() - 2.5*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 3,
+                            senderId: 3,
+                            text: "Le nouveau smartphone est incroyable!",
+                            time: new Date(Date.now() - 2*60*60*1000),
+                            read: true
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    userId: 4,
+                    lastMessage: "Les photos du Japon sont prêtes!",
+                    lastMessageTime: new Date(Date.now() - 1*24*60*60*1000),
+                    unread: 1,
+                    messages: [
+                        {
+                            id: 1,
+                            senderId: 4,
+                            text: "Salut! Je suis de retour du Japon",
+                            time: new Date(Date.now() - 2*24*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 2,
+                            senderId: 1,
+                            text: "Cool! Tu as pris des photos?",
+                            time: new Date(Date.now() - 1.5*24*60*60*1000),
+                            read: true
+                        },
+                        {
+                            id: 3,
+                            senderId: 4,
+                            text: "Les photos du Japon sont prêtes!",
+                            time: new Date(Date.now() - 1*24*60*60*1000),
+                            read: false
+                        }
+                    ]
+                }
             ]
         };
 
@@ -2213,6 +2762,10 @@
         
         // Variables profil
         let currentViewedUser = null;
+        
+        // Variables messagerie
+        let currentConversation = null;
+        let isInChat = false;
 
         // Éléments DOM
         const loadingScreen = document.getElementById('loading');
@@ -2236,10 +2789,21 @@
         const switchCameraBtn = document.getElementById('switchCamera');
         const captureBtn = document.getElementById('captureBtn');
         const cameraFeed = document.getElementById('cameraFeed');
-        const cameraView = document.getElementById('cameraView');
         const toggleFlash = document.getElementById('toggleFlash');
         const videoModeBtn = document.getElementById('videoModeBtn');
         const galleryBtn = document.getElementById('galleryBtn');
+        
+        // Messagerie
+        const messagesBtn = document.getElementById('messagesBtn');
+        const messagesModal = document.getElementById('messagesModal');
+        const closeMessages = document.getElementById('closeMessages');
+        const newMessageBtn = document.getElementById('newMessageBtn');
+        const conversationsList = document.getElementById('conversationsList');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatHeader = document.getElementById('chatHeader');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
         
         // Modals
         const postModal = document.getElementById('postModal');
@@ -2292,9 +2856,16 @@
         const fullscreenVideo = document.getElementById('fullscreenVideo');
         const closeFullscreenBtn = document.getElementById('closeFullscreen');
         const fullscreenVideoPlayer = document.getElementById('fullscreenVideoPlayer');
+        
+        // Scroll indicator
+        const scrollIndicator = document.getElementById('scrollIndicator');
 
         // Initialisation - Ouvre directement la caméra comme Snapchat
         document.addEventListener('DOMContentLoaded', function() {
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+            
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
                 cameraContainer.classList.remove('hidden');
@@ -2302,6 +2873,17 @@
                 initApp();
             }, 1500);
         });
+
+        // Fonction pour ajuster la hauteur sur mobile
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            // Réajuster la hauteur des vidéos
+            document.querySelectorAll('.video-container').forEach(container => {
+                container.style.height = 'calc(var(--vh, 1vh) * 100)';
+            });
+        }
 
         function initApp() {
             // Initialiser les données
@@ -2312,6 +2894,7 @@
             generateYouTubePage();
             generateGamesPage();
             generateProfilePage();
+            generateConversationsList();
             setupVideoAutoplay();
             setupEventListeners();
             startCarousel();
@@ -2321,6 +2904,12 @@
             
             // Mettre à jour le header
             updateHeaderProfile();
+            
+            // Mettre à jour le badge des messages
+            updateMessagesBadge();
+            
+            // Afficher l'indicateur de scroll
+            showScrollIndicator();
         }
 
         function initUserData() {
@@ -2344,11 +2933,27 @@
                 }
             });
             
+            // Initialiser les vidéos verticales
+            appData.verticalVideos.forEach(video => {
+                const user = appData.users.find(u => u.id === video.userId);
+                if (user) {
+                    video.user = user;
+                }
+            });
+            
             // Initialiser les stories avec les données utilisateur
             appData.stories.forEach(story => {
                 const user = appData.users.find(u => u.id === story.userId);
                 if (user) {
                     story.user = user;
+                }
+            });
+            
+            // Initialiser les conversations avec les données utilisateur
+            appData.conversations.forEach(conversation => {
+                const user = appData.users.find(u => u.id === conversation.userId);
+                if (user) {
+                    conversation.user = user;
                 }
             });
         }
@@ -2396,12 +3001,18 @@
                 pages.forEach(p => p.classList.remove('active'));
                 profilePage.classList.add('active');
                 currentPage = 'profile';
+                updateProfilePage();
             });
             
             // Bouton caméra dans la navbar
             openCameraBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 openCamera();
+            });
+            
+            // Bouton messagerie
+            messagesBtn.addEventListener('click', () => {
+                openMessagesModal();
             });
         }
 
@@ -2472,27 +3083,37 @@
             }
         }
 
-        // Générer le feed de vidéos avec système de followers
+        // Générer le feed de vidéos avec système de followers et vidéos verticales
         function generateVideoFeed() {
             videoFeed.innerHTML = '';
             
-            appData.posts.forEach((post, index) => {
+            // Combiner les posts et les vidéos verticales
+            const allPosts = [...appData.posts, ...appData.verticalVideos];
+            
+            // Trier par date
+            allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            allPosts.forEach((post, index) => {
                 const user = post.user;
                 const isLiked = appData.currentUser.likedPosts.includes(post.id);
                 const isFollowing = appData.currentUser.followingUsers.includes(post.userId);
+                const videoOrientation = post.videoOrientation || 'horizontal';
                 
                 const videoContainer = document.createElement('div');
                 videoContainer.className = 'video-container';
                 videoContainer.dataset.index = index;
+                videoContainer.dataset.orientation = videoOrientation;
                 
                 videoContainer.innerHTML = `
-                    ${post.type === 'video' ? `
-                        <video class="video-player" playsinline loop preload="auto" data-index="${index}">
-                            <source src="${post.mediaUrl}" type="video/mp4">
-                        </video>
-                    ` : `
-                        <img src="${post.mediaUrl}" class="video-player" style="width:100%;height:100%;object-fit:cover;">
-                    `}
+                    <div class="video-wrapper">
+                        ${post.type === 'video' ? `
+                            <video class="video-player ${videoOrientation}" playsinline loop preload="auto" data-index="${index}">
+                                <source src="${post.mediaUrl}" type="video/mp4">
+                            </video>
+                        ` : `
+                            <img src="${post.mediaUrl}" class="video-player" style="width:100%;height:100%;object-fit:cover;">
+                        `}
+                    </div>
                     <div class="video-overlay">
                         <div class="video-info">
                             <div class="video-creator">
@@ -2518,7 +3139,7 @@
                             </div>
                             <div class="video-description">${post.caption}</div>
                             <div class="video-tags">
-                                ${post.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                                ${post.tags ? post.tags.map(tag => `<span class="tag">#${tag}</span>`).join('') : ''}
                             </div>
                         </div>
                     </div>
@@ -2536,11 +3157,15 @@
                             <span>${formatNumber(post.shares)}</span>
                         </button>
                         ${post.type === 'video' ? `
-                            <button class="action-btn fullscreen-btn" data-media="${post.mediaUrl}">
+                            <button class="action-btn fullscreen-btn" data-media="${post.mediaUrl}" data-orientation="${videoOrientation}">
                                 <i class="fas fa-expand"></i>
                                 <span>Plein écran</span>
                             </button>
                         ` : ''}
+                        <button class="action-btn message-btn" data-user-id="${user.id}">
+                            <i class="fas fa-comment"></i>
+                            <span>Message</span>
+                        </button>
                     </div>
                 `;
                 
@@ -2548,6 +3173,59 @@
             });
             
             initVideoPlayers();
+            setupVideoScrollSnap();
+        }
+
+        // Configurer le scroll snap pour les vidéos
+        function setupVideoScrollSnap() {
+            const videoContainers = document.querySelectorAll('.video-container');
+            let isScrolling = false;
+            let scrollTimeout;
+            
+            homePage.addEventListener('scroll', function() {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        isScrolling = false;
+                        
+                        // Trouver la vidéo la plus proche du centre
+                        const containerHeight = homePage.clientHeight;
+                        const scrollTop = homePage.scrollTop;
+                        
+                        let closestIndex = 0;
+                        let minDistance = Infinity;
+                        
+                        videoContainers.forEach((container, index) => {
+                            const containerTop = container.offsetTop;
+                            const distance = Math.abs(containerTop - scrollTop - containerHeight/2);
+                            
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestIndex = index;
+                            }
+                        });
+                        
+                        // Jouer la vidéo la plus proche
+                        playVideoAt(closestIndex);
+                        currentVideoIndex = closestIndex;
+                    }, 100);
+                }
+            });
+        }
+
+        function playVideoAt(index) {
+            // Pause toutes les vidéos
+            document.querySelectorAll('.video-player').forEach(video => {
+                if (video.pause) video.pause();
+            });
+            
+            // Jouer la vidéo à l'index spécifié
+            const video = document.querySelector(`.video-player[data-index="${index}"]`);
+            if (video && video.play) {
+                video.play().catch(e => console.log("Autoplay bloqué"));
+            }
         }
 
         // Formatage du temps relatif
@@ -2910,6 +3588,10 @@
 
         // Générer la page Profil
         function generateProfilePage() {
+            updateProfilePage();
+        }
+
+        function updateProfilePage() {
             profilePage.innerHTML = `
                 <div class="profile-header">
                     <div class="profile-top">
@@ -2982,18 +3664,32 @@
                 if (video.tagName === 'VIDEO') {
                     videoPlayers[index] = video;
                     
+                    // Configurer l'affichage en fonction de l'orientation
+                    const container = video.closest('.video-container');
+                    const orientation = container ? container.dataset.orientation : 'horizontal';
+                    
+                    if (orientation === 'vertical') {
+                        video.classList.add('vertical');
+                        video.classList.remove('horizontal');
+                    } else {
+                        video.classList.add('horizontal');
+                        video.classList.remove('vertical');
+                    }
+                    
                     video.addEventListener('click', function() {
                         const mediaUrl = this.src || this.querySelector('source')?.src;
-                        openFullscreenVideo(mediaUrl);
+                        const orientation = this.classList.contains('vertical') ? 'vertical' : 'horizontal';
+                        openFullscreenVideo(mediaUrl, orientation);
                     });
                 }
                 
                 // Bouton like
-                const likeBtn = document.querySelector(`.like-btn[data-post-id="${appData.posts[index]?.id}"]`);
+                const likeBtn = document.querySelector(`.like-btn[data-post-id]`);
                 if (likeBtn) {
                     likeBtn.addEventListener('click', function() {
                         const postId = parseInt(this.dataset.postId);
-                        const post = appData.posts.find(p => p.id === postId);
+                        const allPosts = [...appData.posts, ...appData.verticalVideos];
+                        const post = allPosts.find(p => p.id === postId);
                         const icon = this.querySelector('i');
                         const span = this.querySelector('span');
                         
@@ -3087,7 +3783,17 @@
                 if (fullscreenBtn) {
                     fullscreenBtn.addEventListener('click', function() {
                         const mediaUrl = this.getAttribute('data-media');
-                        openFullscreenVideo(mediaUrl);
+                        const orientation = this.getAttribute('data-orientation') || 'horizontal';
+                        openFullscreenVideo(mediaUrl, orientation);
+                    });
+                }
+                
+                // Bouton message
+                const messageBtn = document.querySelector(`.message-btn[data-user-id]`);
+                if (messageBtn) {
+                    messageBtn.addEventListener('click', function() {
+                        const userId = parseInt(this.dataset.userId);
+                        startConversation(userId);
                     });
                 }
             });
@@ -3095,12 +3801,6 @@
 
         // Configurer l'autoplay des vidéos
         function setupVideoAutoplay() {
-            const options = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.6
-            };
-            
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const video = entry.target;
@@ -3117,7 +3817,10 @@
                         }
                     }
                 });
-            }, options);
+            }, {
+                threshold: 0.8,
+                rootMargin: '0px'
+            });
             
             document.querySelectorAll('.video-player').forEach(video => {
                 if (video.tagName === 'VIDEO') {
@@ -3383,8 +4086,25 @@
                             <div style="font-size: 0.9rem; color: var(--text-secondary);">Abonnements</div>
                         </div>
                     </div>
+                    <div style="margin-top: 25px;">
+                        <button class="profile-btn btn-primary" id="messageUserBtn" style="width: 80%;" data-user-id="${user.id}">
+                            <i class="fas fa-comment"></i> Envoyer un message
+                        </button>
+                    </div>
                 </div>
             `;
+            
+            // Ajouter événement au bouton message
+            setTimeout(() => {
+                const messageBtn = document.getElementById('messageUserBtn');
+                if (messageBtn) {
+                    messageBtn.addEventListener('click', function() {
+                        const userId = parseInt(this.dataset.userId);
+                        startConversation(userId);
+                        userProfileModal.classList.remove('active');
+                    });
+                }
+            }, 100);
             
             userProfileModal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -3506,6 +4226,16 @@
                 document.body.style.overflow = 'auto';
             });
             
+            // Messagerie
+            closeMessages.addEventListener('click', closeMessagesModal);
+            newMessageBtn.addEventListener('click', showNewMessageModal);
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
             // Fullscreen video
             closeFullscreenBtn.addEventListener('click', () => {
                 fullscreenVideo.classList.remove('active');
@@ -3518,14 +4248,15 @@
             });
         }
 
-        // Configurer la caméra AVANT/ARRIÈRE
+        // Configurer la caméra AVANT/ARRIÈRE avec orientation verticale
         async function setupCamera() {
             try {
                 const constraints = {
                     video: { 
                         facingMode: isFrontCamera ? 'user' : 'environment',
                         width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        height: { ideal: 720 },
+                        aspectRatio: { ideal: 9/16 } // Forcer le format portrait
                     }, 
                     audio: false 
                 };
@@ -3540,6 +4271,7 @@
                 // Appliquer le miroir pour la caméra frontale
                 cameraFeed.classList.remove('front', 'back');
                 cameraFeed.classList.add(isFrontCamera ? 'front' : 'back');
+                cameraFeed.classList.add('portrait');
                 
             } catch (err) {
                 console.log("Erreur caméra:", err);
@@ -3706,7 +4438,7 @@
                 
                 mediaRecorder.start();
                 isRecording = true;
-                captureBtn.style.background = 'var(--primary-color)';
+                captureBtn.classList.add('recording');
                 showNotification("Enregistrement en cours...");
                 
             } catch (err) {
@@ -3720,7 +4452,7 @@
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
-                captureBtn.style.background = isVideoMode ? 'var(--primary-color)' : 'white';
+                captureBtn.classList.remove('recording');
                 showNotification("Vidéo enregistrée");
             }
         }
@@ -3816,9 +4548,16 @@
                 return;
             }
             
+            // Déterminer l'orientation de la vidéo
+            let videoOrientation = 'horizontal';
+            if (capturedMediaType === 'video') {
+                // En mode démo, on suppose que les vidéos de l'utilisateur sont verticales
+                videoOrientation = 'vertical';
+            }
+            
             // Créer un nouveau post
             const newPost = {
-                id: appData.posts.length + 1,
+                id: appData.posts.length + appData.verticalVideos.length + 1,
                 userId: 1,
                 type: capturedMediaType,
                 mediaUrl: capturedMedia,
@@ -3829,11 +4568,16 @@
                 createdAt: new Date(),
                 tags: extractTags(caption),
                 location: "Paris, France",
-                user: appData.users.find(u => u.id === 1)
+                user: appData.users.find(u => u.id === 1),
+                videoOrientation: videoOrientation
             };
             
             // Ajouter le post
-            appData.posts.unshift(newPost);
+            if (capturedMediaType === 'video' && videoOrientation === 'vertical') {
+                appData.verticalVideos.unshift(newPost);
+            } else {
+                appData.posts.unshift(newPost);
+            }
             
             // Mettre à jour le compteur de posts
             appData.currentUser.posts++;
@@ -3973,15 +4717,313 @@
         }
 
         // Ouvrir vidéo plein écran
-        function openFullscreenVideo(mediaUrl) {
+        function openFullscreenVideo(mediaUrl, orientation = 'horizontal') {
             fullscreenVideoPlayer.src = mediaUrl;
             fullscreenVideo.classList.add('active');
             fullscreenVideoPlayer.play();
+            
+            // Appliquer le style en fonction de l'orientation
+            if (orientation === 'vertical') {
+                fullscreenVideoPlayer.style.objectFit = 'cover';
+                fullscreenVideoPlayer.style.width = 'auto';
+                fullscreenVideoPlayer.style.height = '100%';
+            } else {
+                fullscreenVideoPlayer.style.objectFit = 'contain';
+                fullscreenVideoPlayer.style.width = '100%';
+                fullscreenVideoPlayer.style.height = 'auto';
+            }
             
             // Pause toutes les vidéos en cours
             videoPlayers.forEach(video => {
                 if (video && video.pause) video.pause();
             });
+        }
+
+        // MESSAGERIE
+        function generateConversationsList() {
+            conversationsList.innerHTML = '';
+            
+            if (appData.conversations.length === 0) {
+                conversationsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>Aucune conversation</p>
+                        <p style="font-size: 0.9rem;">Commencez une nouvelle conversation</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            appData.conversations.forEach(conversation => {
+                const user = conversation.user;
+                const lastMessageTime = formatTimeAgo(conversation.lastMessageTime);
+                
+                const conversationElement = document.createElement('div');
+                conversationElement.className = 'conversation-item';
+                conversationElement.dataset.conversationId = conversation.id;
+                conversationElement.innerHTML = `
+                    <div class="conversation-avatar">
+                        ${user.avatar ? 
+                            `<img src="${user.avatar}" alt="${user.name}">` : 
+                            user.name.charAt(0)
+                        }
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">${user.name}</div>
+                        <div class="conversation-last-message">${conversation.lastMessage}</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                        <div class="conversation-time">${lastMessageTime}</div>
+                        ${conversation.unread > 0 ? `
+                            <div class="unread-badge">${conversation.unread}</div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                conversationElement.addEventListener('click', () => openChat(conversation.id));
+                conversationsList.appendChild(conversationElement);
+            });
+        }
+
+        function openMessagesModal() {
+            messagesModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Afficher la liste des conversations
+            chatContainer.style.display = 'none';
+            conversationsList.style.display = 'block';
+            isInChat = false;
+            
+            // Mettre à jour le badge
+            updateMessagesBadge();
+        }
+
+        function closeMessagesModal() {
+            messagesModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            isInChat = false;
+        }
+
+        function openChat(conversationId) {
+            const conversation = appData.conversations.find(c => c.id === conversationId);
+            if (!conversation) return;
+            
+            currentConversation = conversation;
+            
+            // Mettre à jour l'en-tête du chat
+            chatHeader.innerHTML = `
+                <div class="chat-avatar">
+                    ${conversation.user.avatar ? 
+                        `<img src="${conversation.user.avatar}" alt="${conversation.user.name}">` : 
+                        conversation.user.name.charAt(0)
+                    }
+                </div>
+                <div class="chat-user-info">
+                    <h3>${conversation.user.name}</h3>
+                    <p>En ligne</p>
+                </div>
+            `;
+            
+            // Afficher les messages
+            updateMessagesDisplay();
+            
+            // Basculer vers le chat
+            conversationsList.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            isInChat = true;
+            
+            // Marquer les messages comme lus
+            conversation.unread = 0;
+            updateMessagesBadge();
+        }
+
+        function updateMessagesDisplay() {
+            if (!currentConversation) return;
+            
+            messagesContainer.innerHTML = '';
+            
+            currentConversation.messages.forEach(message => {
+                const isSent = message.senderId === 1;
+                const messageTime = formatTimeAgo(message.time);
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${isSent ? 'sent' : 'received'}`;
+                messageElement.innerHTML = `
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-time">${messageTime}</div>
+                `;
+                
+                messagesContainer.appendChild(messageElement);
+            });
+            
+            // Scroller vers le bas
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text || !currentConversation) return;
+            
+            // Créer le nouveau message
+            const newMessage = {
+                id: currentConversation.messages.length + 1,
+                senderId: 1,
+                text: text,
+                time: new Date(),
+                read: true
+            };
+            
+            // Ajouter au tableau de messages
+            currentConversation.messages.push(newMessage);
+            currentConversation.lastMessage = text;
+            currentConversation.lastMessageTime = new Date();
+            
+            // Mettre à jour l'affichage
+            updateMessagesDisplay();
+            
+            // Réinitialiser l'input
+            chatInput.value = '';
+            
+            // Mettre à jour la liste des conversations
+            generateConversationsList();
+            
+            // Simuler une réponse après 1 seconde
+            setTimeout(() => {
+                const replyMessage = {
+                    id: currentConversation.messages.length + 1,
+                    senderId: currentConversation.userId,
+                    text: getRandomReply(),
+                    time: new Date(),
+                    read: false
+                };
+                
+                currentConversation.messages.push(replyMessage);
+                currentConversation.lastMessage = replyMessage.text;
+                currentConversation.lastMessageTime = new Date();
+                currentConversation.unread = (currentConversation.unread || 0) + 1;
+                
+                updateMessagesDisplay();
+                generateConversationsList();
+                updateMessagesBadge();
+            }, 1000);
+        }
+
+        function getRandomReply() {
+            const replies = [
+                "Salut! Ça va?",
+                "Super vidéo!",
+                "Merci pour ton message!",
+                "Je regarde ça!",
+                "À bientôt!",
+                "Très intéressant!",
+                "D'accord, je note!",
+                "Parfait!",
+                "Je suis d'accord!",
+                "Génial!"
+            ];
+            return replies[Math.floor(Math.random() * replies.length)];
+        }
+
+        function startConversation(userId) {
+            const user = appData.users.find(u => u.id === userId);
+            if (!user) return;
+            
+            // Vérifier si une conversation existe déjà
+            let conversation = appData.conversations.find(c => c.userId === userId);
+            
+            if (!conversation) {
+                // Créer une nouvelle conversation
+                conversation = {
+                    id: appData.conversations.length + 1,
+                    userId: userId,
+                    lastMessage: "Nouvelle conversation",
+                    lastMessageTime: new Date(),
+                    unread: 0,
+                    messages: [],
+                    user: user
+                };
+                
+                appData.conversations.push(conversation);
+            }
+            
+            // Ouvrir la messagerie et le chat
+            messagesModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openChat(conversation.id);
+        }
+
+        function showNewMessageModal() {
+            const usersToMessage = appData.users.filter(user => 
+                user.id !== 1 && !appData.conversations.some(c => c.userId === user.id)
+            );
+            
+            if (usersToMessage.length === 0) {
+                showNotification("Vous avez déjà une conversation avec tous les utilisateurs");
+                return;
+            }
+            
+            // Créer une liste d'utilisateurs pour démarrer une nouvelle conversation
+            const modalContent = document.createElement('div');
+            modalContent.style.padding = '20px';
+            modalContent.innerHTML = `
+                <h3 style="margin-bottom: 20px;">Nouveau message</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${usersToMessage.map(user => `
+                        <div class="user-item" data-user-id="${user.id}" style="cursor: pointer;">
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    ${user.avatar ? 
+                                        `<img src="${user.avatar}" alt="${user.name}">` : 
+                                        user.name.charAt(0)
+                                    }
+                                </div>
+                                <div class="user-details">
+                                    <h4>${user.name}</h4>
+                                    <p>${user.username}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Remplacer temporairement le contenu
+            const originalContent = messagesModal.querySelector('.messages-content');
+            const originalHeader = messagesModal.querySelector('.messages-header');
+            
+            messagesModal.innerHTML = '';
+            messagesModal.appendChild(originalHeader.cloneNode(true));
+            messagesModal.appendChild(modalContent);
+            
+            // Mettre à jour les événements
+            const closeBtn = messagesModal.querySelector('.camera-option');
+            closeBtn.addEventListener('click', () => {
+                messagesModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                // Restaurer l'interface originale
+                setTimeout(() => {
+                    initApp();
+                }, 100);
+            });
+            
+            // Événements pour les utilisateurs
+            modalContent.querySelectorAll('.user-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const userId = parseInt(this.dataset.userId);
+                    startConversation(userId);
+                });
+            });
+        }
+
+        function updateMessagesBadge() {
+            const totalUnread = appData.conversations.reduce((total, conv) => total + (conv.unread || 0), 0);
+            const badge = messagesBtn.querySelector('.notification-badge');
+            
+            if (totalUnread > 0) {
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
         }
 
         // Afficher une notification
@@ -4031,6 +5073,20 @@
             }
         }
 
+        // Afficher l'indicateur de scroll
+        function showScrollIndicator() {
+            scrollIndicator.style.display = 'block';
+            
+            setTimeout(() => {
+                scrollIndicator.style.display = 'none';
+            }, 3000);
+            
+            // Masquer l'indicateur après le premier scroll
+            homePage.addEventListener('scroll', function() {
+                scrollIndicator.style.display = 'none';
+            }, { once: true });
+        }
+
         // Gestion du tactile mobile
         document.addEventListener('touchstart', function(e) {
             if (e.touches.length > 1) e.preventDefault();
@@ -4052,6 +5108,7 @@
                 videoPlayers.forEach(video => {
                     if (video) video.style.height = '100%';
                 });
+                setVH();
             }, 300);
         });
 
@@ -4064,6 +5121,11 @@
                 mediaRecorder.stop();
             }
         });
+
+        // Pour iOS - Désactiver le zoom avec deux doigts
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
     </script>
 </body>
-  </html>
+    </html>
