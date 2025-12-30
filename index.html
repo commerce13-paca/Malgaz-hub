@@ -62,12 +62,10 @@
             padding-right: var(--safe-area-right);
             padding-bottom: var(--safe-area-bottom);
             touch-action: none;
-            transition: opacity 0.3s ease;
         }
 
         .camera-container.hidden {
-            opacity: 0;
-            pointer-events: none;
+            display: none;
         }
 
         .camera-header {
@@ -161,7 +159,7 @@
         }
 
         .capture-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
             border-color: rgba(255, 255, 255, 0.4);
         }
 
@@ -259,7 +257,7 @@
             cursor: pointer;
         }
 
-        .nav-item:active {
+        .nav-item:hover, .nav-item:active {
             background: rgba(255, 255, 255, 0.05);
         }
 
@@ -726,8 +724,8 @@
             background: var(--text-secondary);
         }
 
-        /* PAGE DÉCOUVRIR */
-        #discoverPage {
+        /* PAGE EXPLORER */
+        #explorePage {
             padding: 15px;
             padding-left: calc(15px + var(--safe-area-left));
             padding-right: calc(15px + var(--safe-area-right));
@@ -1799,7 +1797,7 @@
             border-bottom: none;
         }
 
-        .conversation-item:active {
+        .conversation-item:hover {
             background: rgba(255, 255, 255, 0.02);
         }
 
@@ -2081,53 +2079,6 @@
             80% { opacity: 1; }
             100% { opacity: 0; }
         }
-
-        /* Styles de formulaire pour l'édition de profil */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .form-textarea {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
     </style>
 </head>
 <body>
@@ -2210,8 +2161,8 @@
             </div>
         </div>
 
-        <div class="page" id="discoverPage">
-            <!-- Contenu Découvrir -->
+        <div class="page" id="explorePage">
+            <!-- Contenu Explorer -->
         </div>
 
         <div class="page" id="youtubePage">
@@ -2233,9 +2184,9 @@
             <i class="fas fa-home"></i>
             <span>Accueil</span>
         </a>
-        <a href="#" class="nav-item" data-page="discover">
+        <a href="#" class="nav-item" data-page="explore">
             <i class="fas fa-search"></i>
-            <span>Découvrir</span>
+            <span>Explorer</span>
         </a>
         <a href="#" class="nav-item camera" id="openCameraBtn">
             <i class="fas fa-camera"></i>
@@ -2668,7 +2619,7 @@
                     description: "Survie contre les zombies"
                 }
             ],
-            discoverCategories: [
+            exploreCategories: [
                 { id: 1, name: "Tendances", icon: "fas fa-fire", count: "1.2K" },
                 { id: 2, name: "Musique", icon: "fas fa-music", count: "856" },
                 { id: 3, name: "Gaming", icon: "fas fa-gamepad", count: "2.4K" },
@@ -2823,7 +2774,7 @@
         const pages = document.querySelectorAll('.page');
         const navItems = document.querySelectorAll('.nav-item');
         const homePage = document.getElementById('homePage');
-        const discoverPage = document.getElementById('discoverPage');
+        const explorePage = document.getElementById('explorePage');
         const youtubePage = document.getElementById('youtubePage');
         const gamesPage = document.getElementById('gamesPage');
         const profilePage = document.getElementById('profilePage');
@@ -2939,7 +2890,7 @@
             initUserData();
             generateStories();
             generateVideoFeed();
-            generateDiscoverPage();
+            generateExplorePage();
             generateYouTubePage();
             generateGamesPage();
             generateProfilePage();
@@ -3027,14 +2978,7 @@
                             
                             // Changer de page
                             pages.forEach(p => p.classList.remove('active'));
-                            
-                            // CORRECTION: Utiliser discoverPage au lieu de explorePage
-                            if (page === 'discover') {
-                                discoverPage.classList.add('active');
-                            } else {
-                                document.getElementById(page + 'Page').classList.add('active');
-                            }
-                            
+                            document.getElementById(page + 'Page').classList.add('active');
                             currentPage = page;
                             
                             // Redémarrer le carousel si jeux
@@ -3299,16 +3243,16 @@
             return date.toLocaleDateString('fr-FR');
         }
 
-        // Générer la page Découvrir
-        function generateDiscoverPage() {
-            discoverPage.innerHTML = `
+        // Générer la page Explorer
+        function generateExplorePage() {
+            explorePage.innerHTML = `
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" class="search-input" placeholder="Rechercher des vidéos, personnes...">
                 </div>
                 
                 <div class="categories-grid">
-                    ${appData.discoverCategories.map(category => `
+                    ${appData.exploreCategories.map(category => `
                         <div class="category-card touch-feedback" data-category="${category.name}">
                             <div class="category-icon">
                                 <i class="${category.icon}"></i>
