@@ -62,10 +62,12 @@
             padding-right: var(--safe-area-right);
             padding-bottom: var(--safe-area-bottom);
             touch-action: none;
+            transition: opacity 0.3s ease;
         }
 
         .camera-container.hidden {
-            display: none;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .camera-header {
@@ -159,7 +161,7 @@
         }
 
         .capture-btn:active {
-            transform: scale(0.9);
+            transform: scale(0.95);
             border-color: rgba(255, 255, 255, 0.4);
         }
 
@@ -223,6 +225,500 @@
             cursor: pointer;
         }
 
+        /* NOUVEAUX STYLES POUR L'AUTHENTIFICATION */
+        .auth-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-container.hidden {
+            display: none;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .auth-logo p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .auth-form {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .auth-step {
+            display: block;
+        }
+
+        .auth-step.hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-input.error {
+            border-color: #ff453a;
+        }
+
+        .error-message {
+            color: #ff453a;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .auth-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), #ff375f);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            margin-top: 10px;
+        }
+
+        .auth-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-divider::before {
+            left: 0;
+        }
+
+        .auth-divider::after {
+            right: 0;
+        }
+
+        .social-auth {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .social-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-btn.google {
+            color: #4285F4;
+        }
+
+        .social-btn.facebook {
+            color: #4267B2;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .auth-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .terms {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* OTP Verification */
+        .otp-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text-primary);
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .resend-code {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .resend-code a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Avatar Selection */
+        .avatar-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            overflow: hidden;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar-option.selected {
+            border-color: var(--primary-color);
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Progress Bar */
+        .auth-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .auth-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            position: relative;
+            z-index: 2;
+            color: var(--text-secondary);
+        }
+
+        .progress-step.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.completed {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Loading overlay for auth */
+        .auth-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+
+        .auth-loading.active {
+            display: flex;
+        }
+
+        .auth-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Success Animation */
+        .success-animation {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .success-checkmark .check-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            border-radius: 50%;
+            box-sizing: content-box;
+            border: 4px solid var(--accent);
+        }
+
+        .success-checkmark .icon-line {
+            background-color: var(--accent);
+            display: block;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .success-checkmark .icon-line.line-tip {
+            top: 46px;
+            left: 14px;
+            width: 25px;
+            height: 4px;
+            transform: rotate(45deg);
+            animation: icon-line-tip 0.75s;
+        }
+
+        .success-checkmark .icon-line.line-long {
+            top: 38px;
+            right: 8px;
+            width: 47px;
+            height: 4px;
+            transform: rotate(-45deg);
+            animation: icon-line-long 0.75s;
+        }
+
+        @keyframes icon-line-tip {
+            0% { width: 0; left: 1px; top: 19px; }
+            54% { width: 0; left: 1px; top: 19px; }
+            70% { width: 50px; left: -8px; top: 37px; }
+            84% { width: 17px; left: 21px; top: 48px; }
+            100% { width: 25px; left: 14px; top: 46px; }
+        }
+
+        @keyframes icon-line-long {
+            0% { width: 0; right: 46px; top: 54px; }
+            65% { width: 0; right: 46px; top: 54px; }
+            84% { width: 55px; right: 0px; top: 35px; }
+            100% { width: 47px; right: 8px; top: 38px; }
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-meter-fill.weak {
+            width: 33%;
+            background-color: #ff453a;
+        }
+
+        .strength-meter-fill.medium {
+            width: 66%;
+            background-color: #ffd60a;
+        }
+
+        .strength-meter-fill.strong {
+            width: 100%;
+            background-color: var(--accent);
+        }
+
+        .strength-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
         /* Navigation bottom */
         .navbar {
             position: fixed;
@@ -242,6 +738,10 @@
             padding-right: var(--safe-area-right);
         }
 
+        .navbar.hidden {
+            display: none;
+        }
+
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -257,7 +757,7 @@
             cursor: pointer;
         }
 
-        .nav-item:hover, .nav-item:active {
+        .nav-item:active {
             background: rgba(255, 255, 255, 0.05);
         }
 
@@ -309,6 +809,10 @@
 
         .main-content.active {
             display: block;
+        }
+
+        .main-content.hidden {
+            display: none;
         }
 
         .page {
@@ -724,8 +1228,8 @@
             background: var(--text-secondary);
         }
 
-        /* PAGE EXPLORER */
-        #explorePage {
+        /* PAGE DÉCOUVRIR */
+        #discoverPage {
             padding: 15px;
             padding-left: calc(15px + var(--safe-area-left));
             padding-right: calc(15px + var(--safe-area-right));
@@ -1277,6 +1781,7 @@
 
         .profile-actions {
             display: flex;
+            flex-direction: column;
             gap: 10px;
         }
 
@@ -1797,7 +2302,7 @@
             border-bottom: none;
         }
 
-        .conversation-item:hover {
+        .conversation-item:active {
             background: rgba(255, 255, 255, 0.02);
         }
 
@@ -2079,9 +2584,390 @@
             80% { opacity: 1; }
             100% { opacity: 0; }
         }
+
+        /* Styles de formulaire pour l'édition de profil */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Interest styles */
+        .interest-option {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .interest-option.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
+    <!-- Écran d'authentification -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-logo">
+            <h1>MalGaz-Hub<span style="color: var(--accent);">401</span></h1>
+            <p>Rejoignez la communauté</p>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <div class="auth-form" id="loginForm">
+            <div class="auth-title">Connexion</div>
+            <div class="auth-subtitle">Connectez-vous à votre compte</div>
+            
+            <div class="form-group">
+                <label class="form-label">Email ou nom d'utilisateur</label>
+                <input type="text" class="form-input" id="loginEmail" placeholder="vous@exemple.com">
+                <div class="error-message" id="loginEmailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Mot de passe</label>
+                <div class="password-container">
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Votre mot de passe">
+                    <button class="toggle-password" type="button" data-target="loginPassword">
+                        <i class="far fa-eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="loginPasswordError"></div>
+            </div>
+            
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="#" id="forgotPassword" style="color: var(--primary-color); font-size: 0.9rem; text-decoration: none;">
+                    Mot de passe oublié ?
+                </a>
+            </div>
+            
+            <button class="auth-btn" id="loginBtn">Se connecter</button>
+            
+            <div class="auth-divider">ou continuer avec</div>
+            
+            <div class="social-auth">
+                <button class="social-btn google">
+                    <i class="fab fa-google"></i>
+                    Google
+                </button>
+                <button class="social-btn facebook">
+                    <i class="fab fa-facebook"></i>
+                    Facebook
+                </button>
+            </div>
+            
+            <div class="auth-switch">
+                Pas de compte ? <a href="#" id="switchToRegister">S'inscrire</a>
+            </div>
+            
+            <div class="terms">
+                En vous connectant, vous acceptez nos 
+                <a href="#">Conditions d'utilisation</a> et 
+                <a href="#">Politique de confidentialité</a>
+            </div>
+
+            <div class="auth-loading" id="loginLoading">
+                <div class="auth-loading-spinner"></div>
+                <div style="margin-top: 15px; color: var(--text-secondary);">Connexion en cours...</div>
+            </div>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <div class="auth-form hidden" id="registerForm">
+            <div class="auth-progress">
+                <div class="progress-step active" id="step1">1</div>
+                <div class="progress-step" id="step2">2</div>
+                <div class="progress-step" id="step3">3</div>
+            </div>
+
+            <!-- Étape 1: Informations de base -->
+            <div class="auth-step" id="registerStep1">
+                <div class="auth-title">Inscription</div>
+                <div class="auth-subtitle">Étape 1: Informations de base</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" class="form-input" id="registerName" placeholder="Votre nom">
+                    <div class="error-message" id="registerNameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nom d'utilisateur</label>
+                    <input type="text" class="form-input" id="registerUsername" placeholder="@username">
+                    <div class="error-message" id="registerUsernameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="registerEmail" placeholder="vous@exemple.com">
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <div class="password-container">
+                        <input type="password" class="form-input" id="registerPassword" placeholder="Créez un mot de passe">
+                        <button class="toggle-password" type="button" data-target="registerPassword">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-meter-fill" id="passwordStrength"></div>
+                        </div>
+                        <div class="strength-label" id="passwordStrengthLabel"></div>
+                    </div>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirmer le mot de passe</label>
+                    <div class="password-container">
+                        <input type="password" class="form-input" id="registerConfirmPassword" placeholder="Confirmez votre mot de passe">
+                        <button class="toggle-password" type="button" data-target="registerConfirmPassword">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="registerConfirmPasswordError"></div>
+                </div>
+                
+                <button class="auth-btn" id="nextStep1Btn">Suivant</button>
+                
+                <div class="auth-switch">
+                    Déjà un compte ? <a href="#" id="switchToLogin">Se connecter</a>
+                </div>
+
+                <div class="auth-loading" id="registerStep1Loading">
+                    <div class="auth-loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- Étape 2: Avatar et bio -->
+            <div class="auth-step hidden" id="registerStep2">
+                <div class="auth-title">Profil</div>
+                <div class="auth-subtitle">Étape 2: Personnalisez votre profil</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Avatar</label>
+                    <div class="avatar-selection" id="avatarSelection">
+                        <!-- Les avatars seront générés dynamiquement -->
+                    </div>
+                    <div class="error-message" id="avatarError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Bio (optionnel)</label>
+                    <textarea class="form-input" id="registerBio" placeholder="Décrivez-vous en quelques mots..." style="height: 100px; resize: none;"></textarea>
+                    <div class="error-message" id="registerBioError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <input type="date" class="form-input" id="registerBirthdate">
+                    <div class="error-message" id="registerBirthdateError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Genre (optionnel)</label>
+                    <select class="form-input" id="registerGender">
+                        <option value="">Sélectionner</option>
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                        <option value="other">Autre</option>
+                        <option value="prefer-not-to-say">Je préfère ne pas dire</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="auth-btn" style="background: var(--card-bg);" id="backStep2Btn">
+                        Retour
+                    </button>
+                    <button class="auth-btn" id="nextStep2Btn">
+                        Suivant
+                    </button>
+                </div>
+
+                <div class="auth-loading" id="registerStep2Loading">
+                    <div class="auth-loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- Étape 3: Intérêts -->
+            <div class="auth-step hidden" id="registerStep3">
+                <div class="auth-title">Centres d'intérêt</div>
+                <div class="auth-subtitle">Étape 3: Sélectionnez vos intérêts (0/3 minimum)</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Choisissez au moins 3 intérêts</label>
+                    <div class="interests-grid" id="interestsGrid">
+                        <!-- Les intérêts seront générés dynamiquement -->
+                    </div>
+                    <div class="error-message" id="interestsError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" id="acceptTerms" style="margin-right: 10px;">
+                        <label for="acceptTerms" style="font-size: 0.9rem; color: var(--text-secondary);">
+                            J'accepte les <a href="#" style="color: var(--primary-color);">Conditions d'utilisation</a> et la <a href="#" style="color: var(--primary-color);">Politique de confidentialité</a>
+                        </label>
+                    </div>
+                    <div class="error-message" id="termsError"></div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="auth-btn" style="background: var(--card-bg);" id="backStep3Btn">
+                        Retour
+                    </button>
+                    <button class="auth-btn" id="completeRegistrationBtn">
+                        Créer mon compte
+                    </button>
+                </div>
+
+                <div class="auth-loading" id="registerStep3Loading">
+                    <div class="auth-loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- Écran de succès -->
+            <div class="auth-step hidden" id="registerSuccess">
+                <div class="success-animation">
+                    <div class="success-checkmark">
+                        <div class="check-icon">
+                            <span class="icon-line line-tip"></span>
+                            <span class="icon-line line-long"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+                        Compte créé avec succès !
+                    </div>
+                    <div style="color: var(--text-secondary);">
+                        Bienvenue sur MalGaz-Hub 401
+                    </div>
+                </div>
+                
+                <button class="auth-btn" id="goToHomeBtn">
+                    Commencer l'expérience
+                </button>
+            </div>
+        </div>
+
+        <!-- Mot de passe oublié -->
+        <div class="auth-form hidden" id="forgotPasswordForm">
+            <div class="auth-title">Mot de passe oublié</div>
+            <div class="auth-subtitle">Entrez votre email pour réinitialiser votre mot de passe</div>
+            
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="forgotEmail" placeholder="vous@exemple.com">
+                <div class="error-message" id="forgotEmailError"></div>
+            </div>
+            
+            <button class="auth-btn" id="sendResetLinkBtn">Envoyer le lien de réinitialisation</button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="#" id="backToLoginFromForgot" style="color: var(--primary-color); font-size: 0.9rem; text-decoration: none;">
+                    ← Retour à la connexion
+                </a>
+            </div>
+
+            <div class="auth-loading" id="forgotPasswordLoading">
+                <div class="auth-loading-spinner"></div>
+                <div style="margin-top: 15px; color: var(--text-secondary);">Envoi en cours...</div>
+            </div>
+        </div>
+
+        <!-- Réinitialisation du mot de passe -->
+        <div class="auth-form hidden" id="resetPasswordForm">
+            <div class="auth-title">Nouveau mot de passe</div>
+            <div class="auth-subtitle">Créez un nouveau mot de passe</div>
+            
+            <div class="form-group">
+                <label class="form-label">Nouveau mot de passe</label>
+                <div class="password-container">
+                    <input type="password" class="form-input" id="resetPassword" placeholder="Nouveau mot de passe">
+                    <button class="toggle-password" type="button" data-target="resetPassword">
+                        <i class="far fa-eye"></i>
+                    </button>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-meter">
+                        <div class="strength-meter-fill" id="resetPasswordStrength"></div>
+                    </div>
+                    <div class="strength-label" id="resetPasswordStrengthLabel"></div>
+                </div>
+                <div class="error-message" id="resetPasswordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Confirmer le nouveau mot de passe</label>
+                <div class="password-container">
+                    <input type="password" class="form-input" id="resetConfirmPassword" placeholder="Confirmez le nouveau mot de passe">
+                    <button class="toggle-password" type="button" data-target="resetConfirmPassword">
+                        <i class="far fa-eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="resetConfirmPasswordError"></div>
+            </div>
+            
+            <button class="auth-btn" id="resetPasswordBtn">Réinitialiser le mot de passe</button>
+
+            <div class="auth-loading" id="resetPasswordLoading">
+                <div class="auth-loading-spinner"></div>
+                <div style="margin-top: 15px; color: var(--text-secondary);">Réinitialisation en cours...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Écran de chargement -->
     <div class="loading" id="loading">
         <div class="loading-logo">MalGaz-Hub<span>401</span></div>
@@ -2089,7 +2975,7 @@
     </div>
 
     <!-- CAMÉRA VERTICALE AU PREMIER PLAN -->
-    <div class="camera-container" id="cameraContainer">
+    <div class="camera-container hidden" id="cameraContainer">
         <div class="camera-header">
             <button class="camera-option" id="closeCamera">
                 <i class="fas fa-times"></i>
@@ -2126,7 +3012,7 @@
     </div>
 
     <!-- Interface principale (cachée au début) -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content hidden" id="mainContent">
         <!-- Header avec profil intégré -->
         <div class="header">
             <div class="logo">MalGaz-Hub<span>401</span></div>
@@ -2161,8 +3047,8 @@
             </div>
         </div>
 
-        <div class="page" id="explorePage">
-            <!-- Contenu Explorer -->
+        <div class="page" id="discoverPage">
+            <!-- Contenu Découvrir -->
         </div>
 
         <div class="page" id="youtubePage">
@@ -2179,14 +3065,14 @@
     </div>
 
     <!-- Navigation bottom -->
-    <nav class="navbar">
+    <nav class="navbar hidden" id="navbar">
         <a href="#" class="nav-item active" data-page="home">
             <i class="fas fa-home"></i>
             <span>Accueil</span>
         </a>
-        <a href="#" class="nav-item" data-page="explore">
+        <a href="#" class="nav-item" data-page="discover">
             <i class="fas fa-search"></i>
-            <span>Explorer</span>
+            <span>Découvrir</span>
         </a>
         <a href="#" class="nav-item camera" id="openCameraBtn">
             <i class="fas fa-camera"></i>
@@ -2420,28 +3306,45 @@
         // Configuration YouTube API
         const YOUTUBE_API_KEY = 'AIzaSyDhfy-hOznVoLMAaJnpfcw3w7r4uj0Q-zo';
         
-        // Données de l'application COMPLÈTES avec messagerie
+        // Données d'authentification
+        const authData = {
+            currentUser: null,
+            registeredUsers: JSON.parse(localStorage.getItem('malgaz_users')) || [
+                {
+                    id: 1,
+                    email: "demo@malgaz.com",
+                    username: "@malgaz401",
+                    password: "Malgaz401@",
+                    name: "MalGaz User",
+                    bio: "Bienvenue sur mon profil ! 🚀 Passionné de gaming, tech et vidéos.",
+                    avatar: "https://ui-avatars.com/api/?name=MalGaz+User&background=ff2d55&color=fff&size=128",
+                    posts: 24,
+                    followers: 1483,
+                    following: 356,
+                    website: "malgaz-hub.com",
+                    followingUsers: [2, 3, 4, 5],
+                    likedPosts: [1, 3],
+                    story: null,
+                    birthdate: "1995-05-15",
+                    gender: "male",
+                    interests: ["gaming", "tech", "music", "sports"],
+                    verified: true,
+                    createdAt: new Date()
+                }
+            ],
+            sessions: JSON.parse(localStorage.getItem('malgaz_sessions')) || [],
+            resetTokens: []
+        };
+
+        // Données de l'application
         const appData = {
-            currentUser: {
-                id: 1,
-                name: "MalGaz User",
-                username: "@malgaz401",
-                bio: "Bienvenue sur mon profil ! 🚀 Passionné de gaming, tech et vidéos.",
-                avatar: null,
-                posts: 24,
-                followers: 1483,
-                following: 356,
-                website: "malgaz-hub.com",
-                followingUsers: [2, 3, 4, 5],
-                likedPosts: [1, 3],
-                story: null
-            },
+            currentUser: authData.currentUser,
             users: [
                 {
                     id: 1,
                     name: "MalGaz User",
                     username: "@malgaz401",
-                    avatar: null,
+                    avatar: "https://ui-avatars.com/api/?name=MalGaz+User&background=ff2d55&color=fff&size=128",
                     isFollowing: false,
                     isCurrentUser: true,
                     posts: 24,
@@ -2578,7 +3481,6 @@
                     location: "Milan, Italy"
                 }
             ],
-            // Ajout de vidéos verticales
             verticalVideos: [
                 {
                     id: 5,
@@ -2619,7 +3521,7 @@
                     description: "Survie contre les zombies"
                 }
             ],
-            exploreCategories: [
+            discoverCategories: [
                 { id: 1, name: "Tendances", icon: "fas fa-fire", count: "1.2K" },
                 { id: 2, name: "Musique", icon: "fas fa-music", count: "856" },
                 { id: 3, name: "Gaming", icon: "fas fa-gamepad", count: "2.4K" },
@@ -2636,7 +3538,6 @@
                 "Toutes", "Musique", "Gaming", "Sport", "Actualités", 
                 "Cuisine", "Tech", "Fitness", "Éducation", "Divertissement"
             ],
-            // Données de messagerie
             conversations: [
                 {
                     id: 1,
@@ -2674,66 +3575,6 @@
                             read: false
                         }
                     ]
-                },
-                {
-                    id: 2,
-                    userId: 3,
-                    lastMessage: "Le nouveau smartphone est incroyable!",
-                    lastMessageTime: new Date(Date.now() - 2*60*60*1000),
-                    unread: 0,
-                    messages: [
-                        {
-                            id: 1,
-                            senderId: 3,
-                            text: "Salut! J'ai testé le nouveau smartphone",
-                            time: new Date(Date.now() - 3*60*60*1000),
-                            read: true
-                        },
-                        {
-                            id: 2,
-                            senderId: 1,
-                            text: "Ah bon? Il est comment?",
-                            time: new Date(Date.now() - 2.5*60*60*1000),
-                            read: true
-                        },
-                        {
-                            id: 3,
-                            senderId: 3,
-                            text: "Le nouveau smartphone est incroyable!",
-                            time: new Date(Date.now() - 2*60*60*1000),
-                            read: true
-                        }
-                    ]
-                },
-                {
-                    id: 3,
-                    userId: 4,
-                    lastMessage: "Les photos du Japon sont prêtes!",
-                    lastMessageTime: new Date(Date.now() - 1*24*60*60*1000),
-                    unread: 1,
-                    messages: [
-                        {
-                            id: 1,
-                            senderId: 4,
-                            text: "Salut! Je suis de retour du Japon",
-                            time: new Date(Date.now() - 2*24*60*60*1000),
-                            read: true
-                        },
-                        {
-                            id: 2,
-                            senderId: 1,
-                            text: "Cool! Tu as pris des photos?",
-                            time: new Date(Date.now() - 1.5*24*60*60*1000),
-                            read: true
-                        },
-                        {
-                            id: 3,
-                            senderId: 4,
-                            text: "Les photos du Japon sont prêtes!",
-                            time: new Date(Date.now() - 1*24*60*60*1000),
-                            read: false
-                        }
-                    ]
                 }
             ]
         };
@@ -2767,14 +3608,20 @@
         let currentConversation = null;
         let isInChat = false;
 
+        // Variables d'authentification
+        let currentRegisterStep = 1;
+        let selectedAvatar = null;
+        let selectedInterests = [];
+
         // Éléments DOM
         const loadingScreen = document.getElementById('loading');
+        const authContainer = document.getElementById('authContainer');
         const mainContent = document.getElementById('mainContent');
         const cameraContainer = document.getElementById('cameraContainer');
         const pages = document.querySelectorAll('.page');
         const navItems = document.querySelectorAll('.nav-item');
         const homePage = document.getElementById('homePage');
-        const explorePage = document.getElementById('explorePage');
+        const discoverPage = document.getElementById('discoverPage');
         const youtubePage = document.getElementById('youtubePage');
         const gamesPage = document.getElementById('gamesPage');
         const profilePage = document.getElementById('profilePage');
@@ -2782,6 +3629,45 @@
         const videoFeed = document.getElementById('videoFeed');
         const headerProfile = document.getElementById('headerProfile');
         const headerAvatar = document.getElementById('headerAvatar');
+        const navbar = document.getElementById('navbar');
+        
+        // Éléments d'authentification
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        
+        // Boutons de navigation auth
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const backToLoginFromForgot = document.getElementById('backToLoginFromForgot');
+        const forgotPassword = document.getElementById('forgotPassword');
+        
+        // Boutons de formulaire
+        const loginBtn = document.getElementById('loginBtn');
+        const sendResetLinkBtn = document.getElementById('sendResetLinkBtn');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        
+        // Boutons d'inscription
+        const nextStep1Btn = document.getElementById('nextStep1Btn');
+        const nextStep2Btn = document.getElementById('nextStep2Btn');
+        const backStep2Btn = document.getElementById('backStep2Btn');
+        const backStep3Btn = document.getElementById('backStep3Btn');
+        const completeRegistrationBtn = document.getElementById('completeRegistrationBtn');
+        const goToHomeBtn = document.getElementById('goToHomeBtn');
+        
+        // Inputs
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const registerName = document.getElementById('registerName');
+        const registerUsername = document.getElementById('registerUsername');
+        const registerEmail = document.getElementById('registerEmail');
+        const registerPassword = document.getElementById('registerPassword');
+        const registerConfirmPassword = document.getElementById('registerConfirmPassword');
+        const registerBio = document.getElementById('registerBio');
+        const registerBirthdate = document.getElementById('registerBirthdate');
+        const registerGender = document.getElementById('registerGender');
+        const acceptTerms = document.getElementById('acceptTerms');
         
         // Boutons navigation
         const openCameraBtn = document.getElementById('openCameraBtn');
@@ -2860,18 +3746,18 @@
         // Scroll indicator
         const scrollIndicator = document.getElementById('scrollIndicator');
 
-        // Initialisation - Ouvre directement la caméra comme Snapchat
+        // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             setVH();
             window.addEventListener('resize', setVH);
             window.addEventListener('orientationchange', setVH);
             
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                cameraContainer.classList.remove('hidden');
-                setupCamera();
-                initApp();
-            }, 1500);
+            // Vérifier si l'utilisateur est déjà connecté
+            checkExistingSession();
+            
+            initAuth();
+            initAvatars();
+            initInterests();
         });
 
         // Fonction pour ajuster la hauteur sur mobile
@@ -2885,47 +3771,736 @@
             });
         }
 
-        function initApp() {
-            // Initialiser les données
-            initUserData();
-            generateStories();
-            generateVideoFeed();
-            generateExplorePage();
-            generateYouTubePage();
-            generateGamesPage();
-            generateProfilePage();
-            generateConversationsList();
-            setupVideoAutoplay();
-            setupEventListeners();
-            startCarousel();
+        // Vérifier la session existante
+        function checkExistingSession() {
+            const activeSession = authData.sessions.find(session => 
+                session.active && new Date(session.expires) > new Date()
+            );
             
-            // Charger les vidéos YouTube
-            fetchYouTubeVideos('tendances');
+            if (activeSession) {
+                const user = authData.registeredUsers.find(u => u.id === activeSession.userId);
+                if (user) {
+                    loginUser(user);
+                    return true;
+                }
+            }
             
-            // Mettre à jour le header
-            updateHeaderProfile();
+            // Afficher l'écran d'authentification
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                authContainer.classList.remove('hidden');
+            }, 1500);
             
-            // Mettre à jour le badge des messages
-            updateMessagesBadge();
-            
-            // Afficher l'indicateur de scroll
-            showScrollIndicator();
+            return false;
         }
 
+        // Initialiser l'authentification
+        function initAuth() {
+            // Événements de navigation
+            switchToRegister.addEventListener('click', () => showRegisterForm());
+            switchToLogin.addEventListener('click', () => showLoginForm());
+            forgotPassword.addEventListener('click', () => showForgotPasswordForm());
+            backToLoginFromForgot.addEventListener('click', () => showLoginForm());
+            
+            // Événements de connexion
+            loginBtn.addEventListener('click', handleLogin);
+            loginEmail.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            loginPassword.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            // Événements mot de passe oublié
+            sendResetLinkBtn.addEventListener('click', handleForgotPassword);
+            forgotEmail.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleForgotPassword();
+            });
+            
+            // Événements réinitialisation mot de passe
+            resetPasswordBtn.addEventListener('click', handleResetPassword);
+            
+            // Événements d'inscription
+            nextStep1Btn.addEventListener('click', () => validateStep1());
+            nextStep2Btn.addEventListener('click', () => validateStep2());
+            backStep2Btn.addEventListener('click', () => goToStep(1));
+            backStep3Btn.addEventListener('click', () => goToStep(2));
+            completeRegistrationBtn.addEventListener('click', handleRegistration);
+            goToHomeBtn.addEventListener('click', completeRegistration);
+            
+            // Validation en temps réel
+            registerPassword.addEventListener('input', updatePasswordStrength);
+            
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+        }
+
+        // Afficher le formulaire de connexion
+        function showLoginForm() {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            forgotPasswordForm.classList.add('hidden');
+            resetPasswordForm.classList.add('hidden');
+            
+            clearErrors();
+        }
+
+        // Afficher le formulaire d'inscription
+        function showRegisterForm() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            forgotPasswordForm.classList.add('hidden');
+            resetPasswordForm.classList.add('hidden');
+            
+            goToStep(1);
+            clearErrors();
+        }
+
+        // Afficher le formulaire mot de passe oublié
+        function showForgotPasswordForm() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            forgotPasswordForm.classList.remove('hidden');
+            resetPasswordForm.classList.add('hidden');
+            
+            clearErrors();
+        }
+
+        // Aller à une étape d'inscription
+        function goToStep(step) {
+            currentRegisterStep = step;
+            
+            document.querySelectorAll('.auth-step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            
+            document.getElementById(`registerStep${step}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.progress-step').forEach((progressStep, index) => {
+                progressStep.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    progressStep.classList.add('completed');
+                } else if (index + 1 === step) {
+                    progressStep.classList.add('active');
+                }
+            });
+        }
+
+        // Gérer la connexion
+        async function handleLogin() {
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value;
+            
+            let isValid = true;
+            clearErrors();
+            
+            if (!email) {
+                showError('loginEmailError', 'Veuillez entrer votre email ou nom d\'utilisateur');
+                isValid = false;
+            }
+            
+            if (!password) {
+                showError('loginPasswordError', 'Veuillez entrer votre mot de passe');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            document.getElementById('loginLoading').classList.add('active');
+            loginBtn.disabled = true;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const user = authData.registeredUsers.find(u => 
+                (u.email === email || u.username === email) && u.password === password
+            );
+            
+            if (user) {
+                loginUser(user);
+                showNotification("Connexion réussie !");
+            } else {
+                showError('loginPasswordError', 'Email/mot de passe incorrect');
+                document.getElementById('loginLoading').classList.remove('active');
+                loginBtn.disabled = false;
+            }
+        }
+
+        // Connecter l'utilisateur
+        function loginUser(user) {
+            authData.currentUser = user;
+            appData.currentUser = user;
+            
+            const session = {
+                userId: user.id,
+                token: generateToken(),
+                createdAt: new Date(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                active: true
+            };
+            
+            authData.sessions.push(session);
+            saveAuthData();
+            
+            authContainer.classList.add('hidden');
+            startApplication();
+        }
+
+        // Déconnecter l'utilisateur
+        function logoutUser() {
+            const activeSession = authData.sessions.find(session => session.active);
+            if (activeSession) {
+                activeSession.active = false;
+            }
+            
+            authData.currentUser = null;
+            appData.currentUser = null;
+            
+            saveAuthData();
+            
+            mainContent.classList.add('hidden');
+            navbar.classList.add('hidden');
+            cameraContainer.classList.add('hidden');
+            authContainer.classList.remove('hidden');
+            
+            showLoginForm();
+            clearAuthForms();
+            
+            showNotification("Déconnexion réussie");
+        }
+
+        // Gérer l'inscription
+        function handleRegistration() {
+            if (!acceptTerms.checked) {
+                showError('termsError', 'Vous devez accepter les conditions d\'utilisation');
+                return;
+            }
+            
+            if (selectedInterests.length < 3) {
+                showError('interestsError', 'Veuillez sélectionner au moins 3 centres d\'intérêt');
+                return;
+            }
+            
+            document.getElementById('registerStep3Loading').classList.add('active');
+            completeRegistrationBtn.disabled = true;
+            
+            setTimeout(() => {
+                createAccount();
+            }, 1500);
+        }
+
+        // Créer le compte
+        function createAccount() {
+            const userId = authData.registeredUsers.length + 1;
+            const newUser = {
+                id: userId,
+                email: registerEmail.value.trim(),
+                username: registerUsername.value.trim(),
+                password: registerPassword.value,
+                name: registerName.value.trim(),
+                bio: registerBio.value.trim() || "Nouvel utilisateur sur MalGaz-Hub",
+                avatar: selectedAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(registerName.value.trim())}&background=${getRandomColor()}&color=fff&size=128`,
+                posts: 0,
+                followers: 0,
+                following: 0,
+                website: "",
+                followingUsers: [],
+                likedPosts: [],
+                story: null,
+                birthdate: registerBirthdate.value,
+                gender: registerGender.value,
+                interests: selectedInterests,
+                verified: false,
+                createdAt: new Date()
+            };
+            
+            authData.registeredUsers.push(newUser);
+            
+            appData.users.push({
+                id: userId,
+                name: newUser.name,
+                username: newUser.username,
+                avatar: newUser.avatar,
+                isFollowing: false,
+                isCurrentUser: true,
+                posts: 0,
+                followers: 0,
+                following: 0,
+                bio: newUser.bio
+            });
+            
+            saveAuthData();
+            
+            document.getElementById('registerStep3').classList.add('hidden');
+            document.getElementById('registerSuccess').classList.remove('hidden');
+            document.getElementById('registerStep3Loading').classList.remove('active');
+        }
+
+        // Finaliser l'inscription
+        function completeRegistration() {
+            const user = authData.registeredUsers.find(u => u.email === registerEmail.value.trim());
+            if (user) {
+                loginUser(user);
+            }
+        }
+
+        // Valider l'étape 1
+        function validateStep1() {
+            const name = registerName.value.trim();
+            const username = registerUsername.value.trim();
+            const email = registerEmail.value.trim();
+            const password = registerPassword.value;
+            const confirmPassword = registerConfirmPassword.value;
+            
+            let isValid = true;
+            clearErrors();
+            
+            if (!name) {
+                showError('registerNameError', 'Veuillez entrer votre nom');
+                isValid = false;
+            } else if (name.length < 2) {
+                showError('registerNameError', 'Le nom doit contenir au moins 2 caractères');
+                isValid = false;
+            }
+            
+            if (!username) {
+                showError('registerUsernameError', 'Veuillez entrer un nom d\'utilisateur');
+                isValid = false;
+            } else if (username.length < 3) {
+                showError('registerUsernameError', 'Le nom d\'utilisateur doit contenir au moins 3 caractères');
+                isValid = false;
+            } else if (!username.startsWith('@')) {
+                showError('registerUsernameError', 'Le nom d\'utilisateur doit commencer par @');
+                isValid = false;
+            } else if (authData.registeredUsers.some(u => u.username === username)) {
+                showError('registerUsernameError', 'Ce nom d\'utilisateur est déjà pris');
+                isValid = false;
+            }
+            
+            if (!email) {
+                showError('registerEmailError', 'Veuillez entrer votre email');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                showError('registerEmailError', 'Veuillez entrer un email valide');
+                isValid = false;
+            } else if (authData.registeredUsers.some(u => u.email === email)) {
+                showError('registerEmailError', 'Cet email est déjà utilisé');
+                isValid = false;
+            }
+            
+            if (!password) {
+                showError('registerPasswordError', 'Veuillez entrer un mot de passe');
+                isValid = false;
+            } else if (password.length < 8) {
+                showError('registerPasswordError', 'Le mot de passe doit contenir au moins 8 caractères');
+                isValid = false;
+            } else if (!hasUpperCase(password) || !hasLowerCase(password) || !hasNumber(password)) {
+                showError('registerPasswordError', 'Le mot de passe doit contenir des majuscules, minuscules et chiffres');
+                isValid = false;
+            }
+            
+            if (!confirmPassword) {
+                showError('registerConfirmPasswordError', 'Veuillez confirmer votre mot de passe');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                showError('registerConfirmPasswordError', 'Les mots de passe ne correspondent pas');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                document.getElementById('registerStep1Loading').classList.add('active');
+                nextStep1Btn.disabled = true;
+                
+                setTimeout(() => {
+                    document.getElementById('registerStep1Loading').classList.remove('active');
+                    nextStep1Btn.disabled = false;
+                    goToStep(2);
+                }, 1000);
+            }
+        }
+
+        // Valider l'étape 2
+        function validateStep2() {
+            const birthdate = registerBirthdate.value;
+            
+            let isValid = true;
+            clearErrors();
+            
+            if (!selectedAvatar) {
+                showError('avatarError', 'Veuillez sélectionner un avatar');
+                isValid = false;
+            }
+            
+            if (!birthdate) {
+                showError('registerBirthdateError', 'Veuillez entrer votre date de naissance');
+                isValid = false;
+            } else {
+                const birthDate = new Date(birthdate);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                
+                if (age < 13) {
+                    showError('registerBirthdateError', 'Vous devez avoir au moins 13 ans');
+                    isValid = false;
+                }
+            }
+            
+            if (isValid) {
+                document.getElementById('registerStep2Loading').classList.add('active');
+                nextStep2Btn.disabled = true;
+                
+                setTimeout(() => {
+                    document.getElementById('registerStep2Loading').classList.remove('active');
+                    nextStep2Btn.disabled = false;
+                    goToStep(3);
+                }, 1000);
+            }
+        }
+
+        // Gérer mot de passe oublié
+        async function handleForgotPassword() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            if (!email) {
+                showError('forgotEmailError', 'Veuillez entrer votre email');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showError('forgotEmailError', 'Veuillez entrer un email valide');
+                return;
+            }
+            
+            const userExists = authData.registeredUsers.some(u => u.email === email);
+            
+            document.getElementById('forgotPasswordLoading').classList.add('active');
+            sendResetLinkBtn.disabled = true;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            document.getElementById('forgotPasswordLoading').classList.remove('active');
+            sendResetLinkBtn.disabled = false;
+            
+            if (userExists) {
+                const token = generateToken();
+                authData.resetTokens.push({
+                    email: email,
+                    token: token,
+                    expires: new Date(Date.now() + 1 * 60 * 60 * 1000)
+                });
+                
+                saveAuthData();
+                
+                showNotification(`Lien de réinitialisation envoyé à ${email} (Token: ${token})`);
+                showResetPasswordForm();
+            } else {
+                showError('forgotEmailError', 'Aucun compte trouvé avec cet email');
+            }
+        }
+
+        // Gérer la réinitialisation du mot de passe
+        async function handleResetPassword() {
+            const password = document.getElementById('resetPassword').value;
+            const confirmPassword = document.getElementById('resetConfirmPassword').value;
+            
+            let isValid = true;
+            clearErrors();
+            
+            if (!password) {
+                showError('resetPasswordError', 'Veuillez entrer un mot de passe');
+                isValid = false;
+            } else if (password.length < 8) {
+                showError('resetPasswordError', 'Le mot de passe doit contenir au moins 8 caractères');
+                isValid = false;
+            } else if (!hasUpperCase(password) || !hasLowerCase(password) || !hasNumber(password)) {
+                showError('resetPasswordError', 'Le mot de passe doit contenir des majuscules, minuscules et chiffres');
+                isValid = false;
+            }
+            
+            if (!confirmPassword) {
+                showError('resetConfirmPasswordError', 'Veuillez confirmer votre mot de passe');
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                showError('resetConfirmPasswordError', 'Les mots de passe ne correspondent pas');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            document.getElementById('resetPasswordLoading').classList.add('active');
+            resetPasswordBtn.disabled = true;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            document.getElementById('resetPasswordLoading').classList.remove('active');
+            resetPasswordBtn.disabled = false;
+            
+            showNotification("Mot de passe réinitialisé avec succès");
+            showLoginForm();
+        }
+
+        // Initialiser les avatars
+        function initAvatars() {
+            const avatarSelection = document.getElementById('avatarSelection');
+            const avatarColors = ['ff2d55', '5856d6', '32d74b', 'ff9500', '5ac8fa', 'bf5af2'];
+            
+            avatarSelection.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const avatarUrl = `https://ui-avatars.com/api/?name=User&background=${avatarColors[i]}&color=fff&size=128`;
+                
+                const avatarOption = document.createElement('div');
+                avatarOption.className = 'avatar-option';
+                avatarOption.innerHTML = `<img src="${avatarUrl}" alt="Avatar ${i + 1}">`;
+                avatarOption.dataset.avatar = avatarUrl;
+                
+                avatarOption.addEventListener('click', function() {
+                    document.querySelectorAll('.avatar-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    this.classList.add('selected');
+                    selectedAvatar = this.dataset.avatar;
+                });
+                
+                avatarSelection.appendChild(avatarOption);
+            }
+            
+            if (avatarSelection.firstChild) {
+                avatarSelection.firstChild.click();
+            }
+        }
+
+        // Initialiser les intérêts
+        function initInterests() {
+            const interestsGrid = document.getElementById('interestsGrid');
+            const interests = [
+                { id: 'gaming', name: '🎮 Gaming', icon: 'fa-gamepad' },
+                { id: 'tech', name: '💻 Tech', icon: 'fa-laptop' },
+                { id: 'music', name: '🎵 Musique', icon: 'fa-music' },
+                { id: 'sports', name: '⚽ Sports', icon: 'fa-futbol' },
+                { id: 'travel', name: '✈️ Voyage', icon: 'fa-plane' },
+                { id: 'food', name: '🍕 Food', icon: 'fa-utensils' },
+                { id: 'fashion', name: '👗 Mode', icon: 'fa-tshirt' },
+                { id: 'art', name: '🎨 Art', icon: 'fa-palette' },
+                { id: 'movies', name: '🎬 Films', icon: 'fa-film' },
+                { id: 'fitness', name: '💪 Fitness', icon: 'fa-dumbbell' },
+                { id: 'science', name: '🔬 Science', icon: 'fa-flask' },
+                { id: 'books', name: '📚 Livres', icon: 'fa-book' }
+            ];
+            
+            interestsGrid.innerHTML = '';
+            
+            interests.forEach(interest => {
+                const interestElement = document.createElement('div');
+                interestElement.className = 'interest-option';
+                interestElement.innerHTML = `
+                    <i class="fas ${interest.icon}" style="margin-right: 5px;"></i>
+                    ${interest.name}
+                `;
+                interestElement.dataset.interestId = interest.id;
+                
+                interestElement.addEventListener('click', function() {
+                    const interestId = this.dataset.interestId;
+                    
+                    if (this.classList.contains('selected')) {
+                        this.classList.remove('selected');
+                        selectedInterests = selectedInterests.filter(id => id !== interestId);
+                        this.style.background = 'rgba(255, 255, 255, 0.05)';
+                        this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    } else {
+                        this.classList.add('selected');
+                        selectedInterests.push(interestId);
+                        this.style.background = 'var(--primary-color)';
+                        this.style.borderColor = 'var(--primary-color)';
+                    }
+                    
+                    updateInterestsCount();
+                });
+                
+                interestsGrid.appendChild(interestElement);
+            });
+        }
+
+        // Mettre à jour le compteur d'intérêts
+        function updateInterestsCount() {
+            const label = document.querySelector('.auth-subtitle');
+            if (label && label.textContent.includes('Étape 3')) {
+                label.textContent = `Étape 3: Sélectionnez vos intérêts (${selectedInterests.length}/3 minimum)`;
+            }
+        }
+
+        // Mettre à jour la force du mot de passe
+        function updatePasswordStrength() {
+            const password = registerPassword.value;
+            const strengthMeter = document.getElementById('passwordStrength');
+            const strengthLabel = document.getElementById('passwordStrengthLabel');
+            
+            let strength = 0;
+            let label = '';
+            let className = '';
+            
+            if (password.length >= 8) strength++;
+            if (hasUpperCase(password) && hasLowerCase(password)) strength++;
+            if (hasNumber(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    label = 'Faible';
+                    className = 'weak';
+                    break;
+                case 2:
+                case 3:
+                    label = 'Moyen';
+                    className = 'medium';
+                    break;
+                case 4:
+                    label = 'Fort';
+                    className = 'strong';
+                    break;
+            }
+            
+            strengthMeter.className = 'strength-meter-fill ' + className;
+            strengthLabel.textContent = label;
+        }
+
+        // Fonctions utilitaires
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.classList.add('show');
+                
+                const inputName = elementId.replace('Error', '');
+                const input = document.getElementById(inputName);
+                if (input) {
+                    input.classList.add('error');
+                    
+                    input.addEventListener('input', function() {
+                        this.classList.remove('error');
+                        element.classList.remove('show');
+                    });
+                }
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.classList.remove('error');
+            });
+        }
+
+        function clearAuthForms() {
+            loginEmail.value = '';
+            loginPassword.value = '';
+            registerName.value = '';
+            registerUsername.value = '';
+            registerEmail.value = '';
+            registerPassword.value = '';
+            registerConfirmPassword.value = '';
+            registerBio.value = '';
+            registerBirthdate.value = '';
+            registerGender.value = '';
+            acceptTerms.checked = false;
+            selectedAvatar = null;
+            selectedInterests = [];
+            
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            if (document.querySelector('.avatar-option')) {
+                document.querySelector('.avatar-option').click();
+            }
+            
+            document.querySelectorAll('.interest-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.style.background = 'rgba(255, 255, 255, 0.05)';
+                opt.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            });
+            
+            updateInterestsCount();
+            updatePasswordStrength();
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function hasUpperCase(str) {
+            return /[A-Z]/.test(str);
+        }
+
+        function hasLowerCase(str) {
+            return /[a-z]/.test(str);
+        }
+
+        function hasNumber(str) {
+            return /[0-9]/.test(str);
+        }
+
+        function generateToken() {
+            return Math.random().toString(36).substring(2) + Date.now().toString(36);
+        }
+
+        function saveAuthData() {
+            localStorage.setItem('malgaz_users', JSON.stringify(authData.registeredUsers));
+            localStorage.setItem('malgaz_sessions', JSON.stringify(authData.sessions));
+        }
+
+        // Démarrer l'application après connexion
+        function startApplication() {
+            mainContent.classList.remove('hidden');
+            navbar.classList.remove('hidden');
+            
+            updateHeaderProfile();
+            
+            initUserData();
+            
+            setTimeout(() => {
+                setupCamera();
+                initApp();
+                showNotification(`Bienvenue ${appData.currentUser.name} !`);
+            }, 500);
+        }
+
+        // Initialiser les données utilisateur
         function initUserData() {
-            // Initialiser les avatars des utilisateurs
+            if (!authData.currentUser) return;
+            
+            appData.currentUser = authData.currentUser;
+            
             appData.users.forEach(user => {
                 if (!user.avatar) {
                     user.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=${getRandomColor()}&color=fff&size=128`;
                 }
             });
             
-            // Initialiser l'avatar de l'utilisateur courant
-            if (!appData.currentUser.avatar) {
+            if (appData.currentUser && !appData.currentUser.avatar) {
                 appData.currentUser.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(appData.currentUser.name)}&background=ff2d55&color=fff&size=128`;
             }
             
-            // Initialiser les posts avec les données utilisateur
             appData.posts.forEach(post => {
                 const user = appData.users.find(u => u.id === post.userId);
                 if (user) {
@@ -2933,7 +4508,6 @@
                 }
             });
             
-            // Initialiser les vidéos verticales
             appData.verticalVideos.forEach(video => {
                 const user = appData.users.find(u => u.id === video.userId);
                 if (user) {
@@ -2941,7 +4515,6 @@
                 }
             });
             
-            // Initialiser les stories avec les données utilisateur
             appData.stories.forEach(story => {
                 const user = appData.users.find(u => u.id === story.userId);
                 if (user) {
@@ -2949,7 +4522,6 @@
                 }
             });
             
-            // Initialiser les conversations avec les données utilisateur
             appData.conversations.forEach(conversation => {
                 const user = appData.users.find(u => u.id === conversation.userId);
                 if (user) {
@@ -2963,64 +4535,10 @@
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
-        // Navigation entre pages
-        function setupNavigation() {
-            navItems.forEach(item => {
-                if (!item.classList.contains('camera')) {
-                    item.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const page = this.dataset.page;
-                        
-                        if (page !== currentPage) {
-                            // Mettre à jour l'état actif
-                            navItems.forEach(nav => nav.classList.remove('active'));
-                            this.classList.add('active');
-                            
-                            // Changer de page
-                            pages.forEach(p => p.classList.remove('active'));
-                            document.getElementById(page + 'Page').classList.add('active');
-                            currentPage = page;
-                            
-                            // Redémarrer le carousel si jeux
-                            if (page === 'games') {
-                                startCarousel();
-                            }
-                            
-                            // Charger les vidéos YouTube si c'est la page YouTube
-                            if (page === 'youtube' && appData.youtubeVideos.length === 0) {
-                                fetchYouTubeVideos('tendances');
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Header profile click - Ouvre le profil
-            headerProfile.addEventListener('click', () => {
-                navItems.forEach(nav => nav.classList.remove('active'));
-                pages.forEach(p => p.classList.remove('active'));
-                profilePage.classList.add('active');
-                currentPage = 'profile';
-                updateProfilePage();
-            });
-            
-            // Bouton caméra dans la navbar
-            openCameraBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                openCamera();
-            });
-            
-            // Bouton messagerie
-            messagesBtn.addEventListener('click', () => {
-                openMessagesModal();
-            });
-        }
-
         // Générer les stories améliorées
         function generateStories() {
             storiesContainer.innerHTML = '';
             
-            // Ajouter story de l'utilisateur
             const userStory = appData.stories.find(s => s.userId === 1);
             const storyElement = document.createElement('div');
             storyElement.className = 'story';
@@ -3032,7 +4550,6 @@
             `;
             storiesContainer.appendChild(storyElement);
             
-            // Ajouter stories des autres utilisateurs
             appData.stories
                 .filter(story => story.userId !== 1)
                 .forEach(story => {
@@ -3059,7 +4576,6 @@
                     storiesContainer.appendChild(storyElement);
                 });
                 
-            // Événement pour ajouter une story
             document.getElementById('addStoryBtn').addEventListener('click', () => {
                 showNotification("Ouvrez la caméra pour ajouter une story");
                 openCamera();
@@ -3070,12 +4586,10 @@
             const story = appData.stories.find(s => s.id === storyId);
             if (!story) return;
             
-            // Marquer comme vue
             if (!story.seenBy.includes(1)) {
                 story.seenBy.push(1);
             }
             
-            // Ouvrir la story
             if (story.type === 'image') {
                 openFullscreenVideo(story.mediaUrl);
             } else if (story.type === 'video') {
@@ -3083,14 +4597,12 @@
             }
         }
 
-        // Générer le feed de vidéos avec système de followers et vidéos verticales
+        // Générer le feed de vidéos
         function generateVideoFeed() {
             videoFeed.innerHTML = '';
             
-            // Combiner les posts et les vidéos verticales
             const allPosts = [...appData.posts, ...appData.verticalVideos];
             
-            // Trier par date
             allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
             allPosts.forEach((post, index) => {
@@ -3176,7 +4688,6 @@
             setupVideoScrollSnap();
         }
 
-        // Configurer le scroll snap pour les vidéos
         function setupVideoScrollSnap() {
             const videoContainers = document.querySelectorAll('.video-container');
             let isScrolling = false;
@@ -3190,7 +4701,6 @@
                     scrollTimeout = setTimeout(() => {
                         isScrolling = false;
                         
-                        // Trouver la vidéo la plus proche du centre
                         const containerHeight = homePage.clientHeight;
                         const scrollTop = homePage.scrollTop;
                         
@@ -3207,7 +4717,6 @@
                             }
                         });
                         
-                        // Jouer la vidéo la plus proche
                         playVideoAt(closestIndex);
                         currentVideoIndex = closestIndex;
                     }, 100);
@@ -3216,19 +4725,16 @@
         }
 
         function playVideoAt(index) {
-            // Pause toutes les vidéos
             document.querySelectorAll('.video-player').forEach(video => {
                 if (video.pause) video.pause();
             });
             
-            // Jouer la vidéo à l'index spécifié
             const video = document.querySelector(`.video-player[data-index="${index}"]`);
             if (video && video.play) {
                 video.play().catch(e => console.log("Autoplay bloqué"));
             }
         }
 
-        // Formatage du temps relatif
         function formatTimeAgo(date) {
             const now = new Date();
             const diffMs = now - date;
@@ -3243,16 +4749,16 @@
             return date.toLocaleDateString('fr-FR');
         }
 
-        // Générer la page Explorer
-        function generateExplorePage() {
-            explorePage.innerHTML = `
+        // Générer la page Découvrir
+        function generateDiscoverPage() {
+            discoverPage.innerHTML = `
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" class="search-input" placeholder="Rechercher des vidéos, personnes...">
                 </div>
                 
                 <div class="categories-grid">
-                    ${appData.exploreCategories.map(category => `
+                    ${appData.discoverCategories.map(category => `
                         <div class="category-card touch-feedback" data-category="${category.name}">
                             <div class="category-icon">
                                 <i class="${category.icon}"></i>
@@ -3283,7 +4789,6 @@
                 </div>
             `;
             
-            // Événements des catégories
             document.querySelectorAll('.category-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const category = this.dataset.category;
@@ -3330,7 +4835,6 @@
 
         // Événements pour la page YouTube
         function setupYouTubePageEvents() {
-            // Catégories
             const categories = document.querySelectorAll('.youtube-category');
             categories.forEach(category => {
                 category.addEventListener('click', function() {
@@ -3346,7 +4850,6 @@
                 });
             });
             
-            // Recherche
             const searchBtn = document.getElementById('youtubeSearchBtn');
             const searchInput = document.getElementById('youtubeSearchInput');
             
@@ -3531,12 +5034,11 @@
             });
         }
 
-        // Ouvrir une vidéo YouTube DANS L'APPLICATION
+        // Ouvrir une vidéo YouTube
         function openYouTubeVideo(video) {
             currentYouTubeVideo = video;
             youtubeModalTitle.textContent = video.title;
             
-            // URL YouTube intégrée SANS redirection
             const videoUrl = `https://www.youtube.com/embed/${video.videoId}?autoplay=1&rel=0&modestbranding=1&controls=1`;
             youtubePlayer.src = videoUrl;
             
@@ -3632,6 +5134,9 @@
                     <div class="profile-actions">
                         <button class="profile-btn btn-primary" id="editProfileBtn">Modifier le profil</button>
                         <button class="profile-btn btn-secondary" id="shareProfileBtn">Partager le profil</button>
+                        <button class="profile-btn btn-secondary" id="logoutBtn" style="margin-top: 10px; background: #ff453a;">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </button>
                     </div>
                 </div>
                 
@@ -3648,14 +5153,13 @@
             setupProfileEvents();
         }
 
-        // Formater les nombres
         function formatNumber(num) {
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
         }
 
-        // Initialiser les joueurs vidéo avec système de likes et follows
+        // Initialiser les joueurs vidéo
         function initVideoPlayers() {
             const videoElements = document.querySelectorAll('.video-player');
             videoPlayers = [];
@@ -3664,7 +5168,6 @@
                 if (video.tagName === 'VIDEO') {
                     videoPlayers[index] = video;
                     
-                    // Configurer l'affichage en fonction de l'orientation
                     const container = video.closest('.video-container');
                     const orientation = container ? container.dataset.orientation : 'horizontal';
                     
@@ -3683,7 +5186,6 @@
                     });
                 }
                 
-                // Bouton like
                 const likeBtn = document.querySelector(`.like-btn[data-post-id]`);
                 if (likeBtn) {
                     likeBtn.addEventListener('click', function() {
@@ -3697,7 +5199,6 @@
                             const isLiked = appData.currentUser.likedPosts.includes(postId);
                             
                             if (isLiked) {
-                                // Retirer le like
                                 const likeIndex = appData.currentUser.likedPosts.indexOf(postId);
                                 if (likeIndex > -1) {
                                     appData.currentUser.likedPosts.splice(likeIndex, 1);
@@ -3707,7 +5208,6 @@
                                 icon.classList.add('far');
                                 this.classList.remove('liked');
                             } else {
-                                // Ajouter le like
                                 appData.currentUser.likedPosts.push(postId);
                                 post.likes++;
                                 icon.classList.remove('far');
@@ -3720,7 +5220,6 @@
                     });
                 }
                 
-                // Bouton follow
                 const followBtn = document.querySelector(`.follow-user-btn[data-user-id]`);
                 if (followBtn) {
                     followBtn.addEventListener('click', function(e) {
@@ -3732,7 +5231,6 @@
                             const isFollowing = appData.currentUser.followingUsers.includes(userId);
                             
                             if (isFollowing) {
-                                // Arrêter de suivre
                                 const followIndex = appData.currentUser.followingUsers.indexOf(userId);
                                 if (followIndex > -1) {
                                     appData.currentUser.followingUsers.splice(followIndex, 1);
@@ -3743,7 +5241,6 @@
                                 this.classList.remove('following');
                                 showNotification(`Vous ne suivez plus @${user.username}`);
                             } else {
-                                // Commencer à suivre
                                 appData.currentUser.followingUsers.push(userId);
                                 appData.currentUser.following++;
                                 user.followers++;
@@ -3752,13 +5249,11 @@
                                 showNotification(`Vous suivez maintenant @${user.username}`);
                             }
                             
-                            // Mettre à jour les compteurs
                             updateProfileCounters();
                         }
                     });
                 }
                 
-                // Clic sur avatar ou nom d'utilisateur
                 const creatorAvatar = document.querySelector(`.creator-avatar[data-user-id]`);
                 const creatorName = document.querySelector(`.creator-name[data-user-id]`);
                 
@@ -3778,7 +5273,6 @@
                     });
                 }
                 
-                // Bouton plein écran
                 const fullscreenBtn = document.querySelector(`.fullscreen-btn[data-media]`);
                 if (fullscreenBtn) {
                     fullscreenBtn.addEventListener('click', function() {
@@ -3788,7 +5282,6 @@
                     });
                 }
                 
-                // Bouton message
                 const messageBtn = document.querySelector(`.message-btn[data-user-id]`);
                 if (messageBtn) {
                     messageBtn.addEventListener('click', function() {
@@ -3799,7 +5292,6 @@
             });
         }
 
-        // Configurer l'autoplay des vidéos
         function setupVideoAutoplay() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -3901,16 +5393,16 @@
             document.body.style.overflow = 'hidden';
         }
 
-        // Événements pour le profil avec système followers/following
+        // Événements pour le profil
         function setupProfileEvents() {
-            // Bouton modifier profil
             const editProfileBtn = document.getElementById('editProfileBtn');
             const openProfileEdit = document.getElementById('openProfileEdit');
+            const logoutBtn = document.getElementById('logoutBtn');
             
             if (editProfileBtn) editProfileBtn.addEventListener('click', openProfileEditModal);
             if (openProfileEdit) openProfileEdit.addEventListener('click', openProfileEditModal);
+            if (logoutBtn) logoutBtn.addEventListener('click', logoutUser);
             
-            // Bouton partager profil
             const shareProfileBtn = document.getElementById('shareProfileBtn');
             if (shareProfileBtn) {
                 shareProfileBtn.addEventListener('click', () => {
@@ -3926,7 +5418,6 @@
                 });
             }
             
-            // Statistiques cliquables
             const postsStat = document.getElementById('postsStat');
             const followersStat = document.getElementById('followersStat');
             const followingStat = document.getElementById('followingStat');
@@ -3946,13 +5437,11 @@
             let title = '';
             
             if (type === 'followers') {
-                // Simuler des followers (en réalité, ce serait les utilisateurs qui suivent l'utilisateur courant)
                 users = appData.users.filter(user => 
                     user.id !== 1 && Math.random() > 0.5
                 );
                 title = 'Abonnés';
             } else if (type === 'following') {
-                // Utilisateurs que l'utilisateur courant suit
                 users = appData.users.filter(user => 
                     appData.currentUser.followingUsers.includes(user.id)
                 );
@@ -3999,7 +5488,6 @@
                     usersListContent.appendChild(userItem);
                 });
                 
-                // Événements des boutons follow
                 usersListContent.querySelectorAll('.follow-action-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const userId = parseInt(this.dataset.userId);
@@ -4009,7 +5497,6 @@
                             const isFollowing = appData.currentUser.followingUsers.includes(userId);
                             
                             if (isFollowing) {
-                                // Arrêter de suivre
                                 const followIndex = appData.currentUser.followingUsers.indexOf(userId);
                                 if (followIndex > -1) {
                                     appData.currentUser.followingUsers.splice(followIndex, 1);
@@ -4020,7 +5507,6 @@
                                 this.classList.remove('following');
                                 showNotification(`Vous ne suivez plus @${user.username}`);
                             } else {
-                                // Commencer à suivre
                                 appData.currentUser.followingUsers.push(userId);
                                 appData.currentUser.following++;
                                 user.followers++;
@@ -4034,7 +5520,6 @@
                     });
                 });
                 
-                // Clic sur les infos utilisateur pour ouvrir le profil
                 usersListContent.querySelectorAll('.user-info').forEach(userInfo => {
                     userInfo.addEventListener('click', function() {
                         const userId = parseInt(this.dataset.userId);
@@ -4094,7 +5579,6 @@
                 </div>
             `;
             
-            // Ajouter événement au bouton message
             setTimeout(() => {
                 const messageBtn = document.getElementById('messageUserBtn');
                 if (messageBtn) {
@@ -4170,7 +5654,6 @@
                     const isFollowing = appData.currentUser.followingUsers.includes(userId);
                     
                     if (isFollowing) {
-                        // Arrêter de suivre
                         const followIndex = appData.currentUser.followingUsers.indexOf(userId);
                         if (followIndex > -1) {
                             appData.currentUser.followingUsers.splice(followIndex, 1);
@@ -4180,7 +5663,6 @@
                         this.textContent = 'Suivre';
                         showNotification(`Vous ne suivez plus @${currentViewedUser.username}`);
                     } else {
-                        // Commencer à suivre
                         appData.currentUser.followingUsers.push(userId);
                         appData.currentUser.following++;
                         currentViewedUser.followers++;
@@ -4248,7 +5730,58 @@
             });
         }
 
-        // Configurer la caméra AVANT/ARRIÈRE avec orientation verticale
+        function setupNavigation() {
+            navItems.forEach(item => {
+                if (!item.classList.contains('camera')) {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = this.dataset.page;
+                        
+                        if (page !== currentPage) {
+                            navItems.forEach(nav => nav.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            pages.forEach(p => p.classList.remove('active'));
+                            
+                            if (page === 'discover') {
+                                discoverPage.classList.add('active');
+                            } else {
+                                document.getElementById(page + 'Page').classList.add('active');
+                            }
+                            
+                            currentPage = page;
+                            
+                            if (page === 'games') {
+                                startCarousel();
+                            }
+                            
+                            if (page === 'youtube' && appData.youtubeVideos.length === 0) {
+                                fetchYouTubeVideos('tendances');
+                            }
+                        }
+                    });
+                }
+            });
+            
+            headerProfile.addEventListener('click', () => {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                pages.forEach(p => p.classList.remove('active'));
+                profilePage.classList.add('active');
+                currentPage = 'profile';
+                updateProfilePage();
+            });
+            
+            openCameraBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openCamera();
+            });
+            
+            messagesBtn.addEventListener('click', () => {
+                openMessagesModal();
+            });
+        }
+
+        // Configurer la caméra
         async function setupCamera() {
             try {
                 const constraints = {
@@ -4256,7 +5789,7 @@
                         facingMode: isFrontCamera ? 'user' : 'environment',
                         width: { ideal: 1280 },
                         height: { ideal: 720 },
-                        aspectRatio: { ideal: 9/16 } // Forcer le format portrait
+                        aspectRatio: { ideal: 9/16 }
                     }, 
                     audio: false 
                 };
@@ -4268,7 +5801,6 @@
                 mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
                 cameraFeed.srcObject = mediaStream;
                 
-                // Appliquer le miroir pour la caméra frontale
                 cameraFeed.classList.remove('front', 'back');
                 cameraFeed.classList.add(isFrontCamera ? 'front' : 'back');
                 cameraFeed.classList.add('portrait');
@@ -4327,7 +5859,6 @@
             mainContent.classList.remove('active');
             document.body.style.overflow = 'hidden';
             
-            // Démarrer la caméra si pas déjà fait
             if (!mediaStream) {
                 setupCamera();
             }
@@ -4339,7 +5870,6 @@
             mainContent.classList.add('active');
             document.body.style.overflow = 'auto';
             
-            // Arrêter l'enregistrement si en cours
             if (isRecording) {
                 stopRecording();
             }
@@ -4391,7 +5921,6 @@
             
             const ctx = canvas.getContext('2d');
             
-            // Appliquer le miroir si caméra frontale
             if (isFrontCamera) {
                 ctx.translate(canvas.width, 0);
                 ctx.scale(-1, 1);
@@ -4399,7 +5928,6 @@
             
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Ajouter un filtre ou effet si flash activé
             if (flashEnabled) {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -4479,13 +6007,11 @@
 
         // Ouvrir modal publication
         function openPostModal() {
-            // Mettre à jour l'avatar et nom d'utilisateur
             postUserAvatar.innerHTML = appData.currentUser.avatar ? 
                 `<img src="${appData.currentUser.avatar}" alt="${appData.currentUser.name}">` :
                 appData.currentUser.name.charAt(0);
             postUserName.textContent = appData.currentUser.name;
             
-            // Mettre à jour l'aperçu média
             updateMediaPreview();
             
             postModal.classList.add('active');
@@ -4511,7 +6037,6 @@
                     `;
                 }
                 
-                // Événement pour supprimer le média
                 document.getElementById('removeMedia').addEventListener('click', (e) => {
                     e.stopPropagation();
                     capturedMedia = null;
@@ -4548,14 +6073,11 @@
                 return;
             }
             
-            // Déterminer l'orientation de la vidéo
             let videoOrientation = 'horizontal';
             if (capturedMediaType === 'video') {
-                // En mode démo, on suppose que les vidéos de l'utilisateur sont verticales
                 videoOrientation = 'vertical';
             }
             
-            // Créer un nouveau post
             const newPost = {
                 id: appData.posts.length + appData.verticalVideos.length + 1,
                 userId: 1,
@@ -4572,17 +6094,14 @@
                 videoOrientation: videoOrientation
             };
             
-            // Ajouter le post
             if (capturedMediaType === 'video' && videoOrientation === 'vertical') {
                 appData.verticalVideos.unshift(newPost);
             } else {
                 appData.posts.unshift(newPost);
             }
             
-            // Mettre à jour le compteur de posts
             appData.currentUser.posts++;
             
-            // Créer une story si c'est une image
             if (capturedMediaType === 'image') {
                 const newStory = {
                     id: appData.stories.length + 1,
@@ -4596,14 +6115,11 @@
                 appData.stories.unshift(newStory);
             }
             
-            // Fermer le modal
             postModal.classList.remove('active');
             document.body.style.overflow = 'auto';
             
-            // Réinitialiser
             resetPostModal();
             
-            // Mettre à jour l'affichage
             updateProfileCounters();
             generateVideoFeed();
             generateStories();
@@ -4611,7 +6127,6 @@
             
             showNotification("Publication ajoutée avec succès !");
             
-            // Retourner à l'accueil
             setTimeout(() => {
                 navItems.forEach(nav => nav.classList.remove('active'));
                 navItems[0].classList.add('active');
@@ -4647,7 +6162,6 @@
             appData.currentUser.bio = editBio.value;
             appData.currentUser.website = editWebsite.value;
             
-            // Générer un nouvel avatar si pas d'upload
             if (!appData.currentUser.avatar) {
                 appData.currentUser.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(appData.currentUser.name)}&background=${getRandomColor()}&color=fff&size=128`;
             }
@@ -4722,7 +6236,6 @@
             fullscreenVideo.classList.add('active');
             fullscreenVideoPlayer.play();
             
-            // Appliquer le style en fonction de l'orientation
             if (orientation === 'vertical') {
                 fullscreenVideoPlayer.style.objectFit = 'cover';
                 fullscreenVideoPlayer.style.width = 'auto';
@@ -4733,7 +6246,6 @@
                 fullscreenVideoPlayer.style.height = 'auto';
             }
             
-            // Pause toutes les vidéos en cours
             videoPlayers.forEach(video => {
                 if (video && video.pause) video.pause();
             });
@@ -4789,12 +6301,10 @@
             messagesModal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            // Afficher la liste des conversations
             chatContainer.style.display = 'none';
             conversationsList.style.display = 'block';
             isInChat = false;
             
-            // Mettre à jour le badge
             updateMessagesBadge();
         }
 
@@ -4810,7 +6320,6 @@
             
             currentConversation = conversation;
             
-            // Mettre à jour l'en-tête du chat
             chatHeader.innerHTML = `
                 <div class="chat-avatar">
                     ${conversation.user.avatar ? 
@@ -4824,15 +6333,12 @@
                 </div>
             `;
             
-            // Afficher les messages
             updateMessagesDisplay();
             
-            // Basculer vers le chat
             conversationsList.style.display = 'none';
             chatContainer.style.display = 'flex';
             isInChat = true;
             
-            // Marquer les messages comme lus
             conversation.unread = 0;
             updateMessagesBadge();
         }
@@ -4856,7 +6362,6 @@
                 messagesContainer.appendChild(messageElement);
             });
             
-            // Scroller vers le bas
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -4864,7 +6369,6 @@
             const text = chatInput.value.trim();
             if (!text || !currentConversation) return;
             
-            // Créer le nouveau message
             const newMessage = {
                 id: currentConversation.messages.length + 1,
                 senderId: 1,
@@ -4873,21 +6377,16 @@
                 read: true
             };
             
-            // Ajouter au tableau de messages
             currentConversation.messages.push(newMessage);
             currentConversation.lastMessage = text;
             currentConversation.lastMessageTime = new Date();
             
-            // Mettre à jour l'affichage
             updateMessagesDisplay();
             
-            // Réinitialiser l'input
             chatInput.value = '';
             
-            // Mettre à jour la liste des conversations
             generateConversationsList();
             
-            // Simuler une réponse après 1 seconde
             setTimeout(() => {
                 const replyMessage = {
                     id: currentConversation.messages.length + 1,
@@ -4928,11 +6427,9 @@
             const user = appData.users.find(u => u.id === userId);
             if (!user) return;
             
-            // Vérifier si une conversation existe déjà
             let conversation = appData.conversations.find(c => c.userId === userId);
             
             if (!conversation) {
-                // Créer une nouvelle conversation
                 conversation = {
                     id: appData.conversations.length + 1,
                     userId: userId,
@@ -4946,7 +6443,6 @@
                 appData.conversations.push(conversation);
             }
             
-            // Ouvrir la messagerie et le chat
             messagesModal.classList.add('active');
             document.body.style.overflow = 'hidden';
             openChat(conversation.id);
@@ -4962,7 +6458,6 @@
                 return;
             }
             
-            // Créer une liste d'utilisateurs pour démarrer une nouvelle conversation
             const modalContent = document.createElement('div');
             modalContent.style.padding = '20px';
             modalContent.innerHTML = `
@@ -4987,7 +6482,6 @@
                 </div>
             `;
             
-            // Remplacer temporairement le contenu
             const originalContent = messagesModal.querySelector('.messages-content');
             const originalHeader = messagesModal.querySelector('.messages-header');
             
@@ -4995,18 +6489,15 @@
             messagesModal.appendChild(originalHeader.cloneNode(true));
             messagesModal.appendChild(modalContent);
             
-            // Mettre à jour les événements
             const closeBtn = messagesModal.querySelector('.camera-option');
             closeBtn.addEventListener('click', () => {
                 messagesModal.classList.remove('active');
                 document.body.style.overflow = 'auto';
-                // Restaurer l'interface originale
                 setTimeout(() => {
                     initApp();
                 }, 100);
             });
             
-            // Événements pour les utilisateurs
             modalContent.querySelectorAll('.user-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const userId = parseInt(this.dataset.userId);
@@ -5055,7 +6546,6 @@
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
             
-            // Ajouter les animations CSS si pas déjà présentes
             if (!document.querySelector('#notification-animations')) {
                 const style = document.createElement('style');
                 style.id = 'notification-animations';
@@ -5081,10 +6571,29 @@
                 scrollIndicator.style.display = 'none';
             }, 3000);
             
-            // Masquer l'indicateur après le premier scroll
             homePage.addEventListener('scroll', function() {
                 scrollIndicator.style.display = 'none';
             }, { once: true });
+        }
+
+        function initApp() {
+            initUserData();
+            generateStories();
+            generateVideoFeed();
+            generateDiscoverPage();
+            generateYouTubePage();
+            generateGamesPage();
+            generateProfilePage();
+            generateConversationsList();
+            setupVideoAutoplay();
+            setupEventListeners();
+            startCarousel();
+            
+            fetchYouTubeVideos('tendances');
+            
+            updateHeaderProfile();
+            updateMessagesBadge();
+            showScrollIndicator();
         }
 
         // Gestion du tactile mobile
@@ -5122,10 +6631,10 @@
             }
         });
 
-        // Pour iOS - Désactiver le zoom avec deux doigts
+        // Pour iOS
         document.addEventListener('gesturestart', function(e) {
             e.preventDefault();
         });
     </script>
 </body>
-</html>
+                    </html>
