@@ -6,6 +6,14 @@
     <title>MalGaz-Hub 401</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    
     <style>
         :root {
             --primary-color: #ff2d55;
@@ -2665,8 +2673,8 @@
             <div class="auth-subtitle">Connectez-vous à votre compte</div>
             
             <div class="form-group">
-                <label class="form-label">Email ou nom d'utilisateur</label>
-                <input type="text" class="form-input" id="loginEmail" placeholder="vous@exemple.com">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="loginEmail" placeholder="vous@exemple.com">
                 <div class="error-message" id="loginEmailError"></div>
             </div>
             
@@ -2692,11 +2700,11 @@
             <div class="auth-divider">ou continuer avec</div>
             
             <div class="social-auth">
-                <button class="social-btn google">
+                <button class="social-btn google" id="googleLoginBtn">
                     <i class="fab fa-google"></i>
                     Google
                 </button>
-                <button class="social-btn facebook">
+                <button class="social-btn facebook" id="facebookLoginBtn">
                     <i class="fab fa-facebook"></i>
                     Facebook
                 </button>
@@ -3303,10 +3311,42 @@
 
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script>
+        // ==============================
+        // INITIALISATION FIREBASE
+        // ==============================
+        
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC0xf4vRCvs2FyUTZIu3lT05Nx-xbfXPZY",
+            authDomain: "malgaz-hub-official.firebaseapp.com",
+            projectId: "malgaz-hub-official",
+            storageBucket: "malgaz-hub-official.firebasestorage.app",
+            messagingSenderId: "864060276906",
+            appId: "1:864060276906:web:f1735cc84bec1d85d2d0d3",
+            measurementId: "G-E1HVFWJLZK"
+        };
+
+        // Initialiser Firebase
+        let firebaseApp, firebaseAuth, firestore, storage, analytics;
+        
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            firebaseAuth = firebase.auth();
+            firestore = firebase.firestore();
+            storage = firebase.storage();
+            analytics = firebase.analytics();
+            
+            console.log("Firebase initialisé avec succès");
+        } catch (error) {
+            console.error("Erreur d'initialisation Firebase:", error);
+            // Mode démo en cas d'erreur
+            showNotification("Mode démo activé - Firebase non configuré");
+        }
+
         // Configuration YouTube API
         const YOUTUBE_API_KEY = 'AIzaSyDhfy-hOznVoLMAaJnpfcw3w7r4uj0Q-zo';
         
-        // Données d'authentification
+        // Données d'authentification (pour le mode démo)
         const authData = {
             currentUser: null,
             registeredUsers: JSON.parse(localStorage.getItem('malgaz_users')) || [
@@ -3314,7 +3354,6 @@
                     id: 1,
                     email: "demo@malgaz.com",
                     username: "@malgaz401",
-                    password: "Malgaz401@",
                     name: "MalGaz User",
                     bio: "Bienvenue sur mon profil ! 🚀 Passionné de gaming, tech et vidéos.",
                     avatar: "https://ui-avatars.com/api/?name=MalGaz+User&background=ff2d55&color=fff&size=128",
@@ -3613,7 +3652,202 @@
         let selectedAvatar = null;
         let selectedInterests = [];
 
-        // Éléments DOM
+        // ==============================
+        // FONCTIONS FIREBASE
+        // ==============================
+
+        // Vérifier l'état d'authentification Firebase
+        function checkFirebaseAuthState() {
+            if (!firebaseAuth) return false;
+            
+            return new Promise((resolve) => {
+                firebaseAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        // Utilisateur connecté via Firebase
+                        handleFirebaseUserLogin(user);
+                        resolve(true);
+                    } else {
+                        // Aucun utilisateur connecté
+                        resolve(false);
+                    }
+                });
+            });
+        }
+
+        // Gérer la connexion d'un utilisateur Firebase
+        async function handleFirebaseUserLogin(firebaseUser) {
+            try {
+                // Récupérer les données utilisateur depuis Firestore
+                const userDoc = await firestore.collection('users').doc(firebaseUser.uid).get();
+                
+                if (userDoc.exists) {
+                    // Utilisateur existant dans Firestore
+                    const userData = userDoc.data();
+                    appData.currentUser = {
+                        id: firebaseUser.uid,
+                        email: firebaseUser.email,
+                        username: userData.username || `@${firebaseUser.email.split('@')[0]}`,
+                        name: userData.name || firebaseUser.displayName || "Utilisateur",
+                        bio: userData.bio || "Bienvenue sur mon profil !",
+                        avatar: userData.avatar || firebaseUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(firebaseUser.displayName || "User")}&background=ff2d55&color=fff&size=128`,
+                        posts: userData.posts || 0,
+                        followers: userData.followers || 0,
+                        following: userData.following || 0,
+                        website: userData.website || "",
+                        followingUsers: userData.followingUsers || [],
+                        likedPosts: userData.likedPosts || [],
+                        story: userData.story || null,
+                        birthdate: userData.birthdate || "",
+                        gender: userData.gender || "",
+                        interests: userData.interests || [],
+                        verified: userData.verified || false,
+                        createdAt: userData.createdAt || new Date()
+                    };
+                } else {
+                    // Nouvel utilisateur - créer le document dans Firestore
+                    const newUserData = {
+                        email: firebaseUser.email,
+                        username: `@${firebaseUser.email.split('@')[0]}`,
+                        name: firebaseUser.displayName || "Nouvel utilisateur",
+                        bio: "Bienvenue sur MalGaz-Hub !",
+                        avatar: firebaseUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(firebaseUser.displayName || "User")}&background=ff2d55&color=fff&size=128`,
+                        posts: 0,
+                        followers: 0,
+                        following: 0,
+                        website: "",
+                        followingUsers: [],
+                        likedPosts: [],
+                        story: null,
+                        birthdate: "",
+                        gender: "",
+                        interests: [],
+                        verified: false,
+                        createdAt: new Date()
+                    };
+                    
+                    await firestore.collection('users').doc(firebaseUser.uid).set(newUserData);
+                    appData.currentUser = { id: firebaseUser.uid, ...newUserData };
+                }
+                
+                // Démarrer l'application
+                authContainer.classList.add('hidden');
+                startApplication();
+                showNotification(`Bienvenue ${appData.currentUser.name} !`);
+                
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données utilisateur:", error);
+                showNotification("Erreur de connexion. Mode démo activé.");
+                // Fallback au mode démo
+                checkExistingSession();
+            }
+        }
+
+        // Connexion avec email/mot de passe Firebase
+        async function firebaseEmailLogin(email, password) {
+            try {
+                const userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
+                return { success: true, user: userCredential.user };
+            } catch (error) {
+                console.error("Erreur de connexion Firebase:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Inscription avec email/mot de passe Firebase
+        async function firebaseEmailSignup(email, password, userData) {
+            try {
+                // Créer l'utilisateur dans Firebase Auth
+                const userCredential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+                const firebaseUser = userCredential.user;
+                
+                // Préparer les données utilisateur pour Firestore
+                const firestoreUserData = {
+                    email: email,
+                    username: userData.username,
+                    name: userData.name,
+                    bio: userData.bio || "Bienvenue sur MalGaz-Hub !",
+                    avatar: userData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=ff2d55&color=fff&size=128`,
+                    posts: 0,
+                    followers: 0,
+                    following: 0,
+                    website: "",
+                    followingUsers: [],
+                    likedPosts: [],
+                    story: null,
+                    birthdate: userData.birthdate || "",
+                    gender: userData.gender || "",
+                    interests: userData.interests || [],
+                    verified: false,
+                    createdAt: new Date()
+                };
+                
+                // Sauvegarder dans Firestore
+                await firestore.collection('users').doc(firebaseUser.uid).set(firestoreUserData);
+                
+                // Mettre à jour le profil dans Firebase Auth
+                await firebaseUser.updateProfile({
+                    displayName: userData.name,
+                    photoURL: userData.avatar || null
+                });
+                
+                return { success: true, user: firebaseUser };
+                
+            } catch (error) {
+                console.error("Erreur d'inscription Firebase:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Connexion avec Google
+        async function firebaseGoogleLogin() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const userCredential = await firebaseAuth.signInWithPopup(provider);
+                return { success: true, user: userCredential.user };
+            } catch (error) {
+                console.error("Erreur de connexion Google:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Connexion avec Facebook
+        async function firebaseFacebookLogin() {
+            try {
+                const provider = new firebase.auth.FacebookAuthProvider();
+                const userCredential = await firebaseAuth.signInWithPopup(provider);
+                return { success: true, user: userCredential.user };
+            } catch (error) {
+                console.error("Erreur de connexion Facebook:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Déconnexion Firebase
+        async function firebaseLogout() {
+            try {
+                await firebaseAuth.signOut();
+                return { success: true };
+            } catch (error) {
+                console.error("Erreur de déconnexion Firebase:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Réinitialisation de mot de passe Firebase
+        async function firebaseResetPassword(email) {
+            try {
+                await firebaseAuth.sendPasswordResetEmail(email);
+                return { success: true };
+            } catch (error) {
+                console.error("Erreur de réinitialisation de mot de passe:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ==============================
+        // ÉLÉMENTS DOM
+        // ==============================
+        
         const loadingScreen = document.getElementById('loading');
         const authContainer = document.getElementById('authContainer');
         const mainContent = document.getElementById('mainContent');
@@ -3647,6 +3881,8 @@
         const loginBtn = document.getElementById('loginBtn');
         const sendResetLinkBtn = document.getElementById('sendResetLinkBtn');
         const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const facebookLoginBtn = document.getElementById('facebookLoginBtn');
         
         // Boutons d'inscription
         const nextStep1Btn = document.getElementById('nextStep1Btn');
@@ -3746,14 +3982,24 @@
         // Scroll indicator
         const scrollIndicator = document.getElementById('scrollIndicator');
 
-        // Initialisation
+        // ==============================
+        // INITIALISATION
+        // ==============================
+        
         document.addEventListener('DOMContentLoaded', function() {
             setVH();
             window.addEventListener('resize', setVH);
             window.addEventListener('orientationchange', setVH);
             
-            // Vérifier si l'utilisateur est déjà connecté
-            checkExistingSession();
+            // Vérifier l'authentification Firebase
+            setTimeout(async () => {
+                const isFirebaseAuthed = await checkFirebaseAuthState();
+                
+                if (!isFirebaseAuthed) {
+                    // Vérifier si l'utilisateur est déjà connecté (mode démo)
+                    checkExistingSession();
+                }
+            }, 1000);
             
             initAuth();
             initAvatars();
@@ -3771,7 +4017,7 @@
             });
         }
 
-        // Vérifier la session existante
+        // Vérifier la session existante (mode démo)
         function checkExistingSession() {
             const activeSession = authData.sessions.find(session => 
                 session.active && new Date(session.expires) > new Date()
@@ -3810,6 +4056,15 @@
             loginPassword.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') handleLogin();
             });
+            
+            // Événements de connexion sociale
+            if (googleLoginBtn) {
+                googleLoginBtn.addEventListener('click', handleGoogleLogin);
+            }
+            
+            if (facebookLoginBtn) {
+                facebookLoginBtn.addEventListener('click', handleFacebookLogin);
+            }
             
             // Événements mot de passe oublié
             sendResetLinkBtn.addEventListener('click', handleForgotPassword);
@@ -3850,6 +4105,10 @@
                 });
             });
         }
+
+        // ==============================
+        // GESTION AUTHENTIFICATION
+        // ==============================
 
         // Afficher le formulaire de connexion
         function showLoginForm() {
@@ -3911,7 +4170,7 @@
             clearErrors();
             
             if (!email) {
-                showError('loginEmailError', 'Veuillez entrer votre email ou nom d\'utilisateur');
+                showError('loginEmailError', 'Veuillez entrer votre email');
                 isValid = false;
             }
             
@@ -3925,6 +4184,22 @@
             document.getElementById('loginLoading').classList.add('active');
             loginBtn.disabled = true;
             
+            // Essayer Firebase d'abord
+            if (firebaseAuth) {
+                const result = await firebaseEmailLogin(email, password);
+                
+                if (result.success) {
+                    // Succès Firebase
+                    document.getElementById('loginLoading').classList.remove('active');
+                    loginBtn.disabled = false;
+                    return;
+                } else {
+                    // Échec Firebase, essayer le mode démo
+                    console.log("Échec Firebase, tentative mode démo");
+                }
+            }
+            
+            // Mode démo (fallback)
             await new Promise(resolve => setTimeout(resolve, 1500));
             
             const user = authData.registeredUsers.find(u => 
@@ -3941,7 +4216,57 @@
             }
         }
 
-        // Connecter l'utilisateur
+        // Connexion avec Google
+        async function handleGoogleLogin() {
+            if (!firebaseAuth) {
+                showNotification("Firebase non disponible. Mode démo activé.");
+                return;
+            }
+            
+            try {
+                document.getElementById('loginLoading').classList.add('active');
+                const result = await firebaseGoogleLogin();
+                
+                if (result.success) {
+                    // Succès - géré par onAuthStateChanged
+                    showNotification("Connexion Google réussie !");
+                } else {
+                    showNotification("Erreur de connexion Google");
+                    document.getElementById('loginLoading').classList.remove('active');
+                }
+            } catch (error) {
+                console.error("Erreur Google Login:", error);
+                showNotification("Erreur de connexion Google");
+                document.getElementById('loginLoading').classList.remove('active');
+            }
+        }
+
+        // Connexion avec Facebook
+        async function handleFacebookLogin() {
+            if (!firebaseAuth) {
+                showNotification("Firebase non disponible. Mode démo activé.");
+                return;
+            }
+            
+            try {
+                document.getElementById('loginLoading').classList.add('active');
+                const result = await firebaseFacebookLogin();
+                
+                if (result.success) {
+                    // Succès - géré par onAuthStateChanged
+                    showNotification("Connexion Facebook réussie !");
+                } else {
+                    showNotification("Erreur de connexion Facebook");
+                    document.getElementById('loginLoading').classList.remove('active');
+                }
+            } catch (error) {
+                console.error("Erreur Facebook Login:", error);
+                showNotification("Erreur de connexion Facebook");
+                document.getElementById('loginLoading').classList.remove('active');
+            }
+        }
+
+        // Connecter l'utilisateur (mode démo)
         function loginUser(user) {
             authData.currentUser = user;
             appData.currentUser = user;
@@ -3962,7 +4287,16 @@
         }
 
         // Déconnecter l'utilisateur
-        function logoutUser() {
+        async function logoutUser() {
+            // Déconnexion Firebase si disponible
+            if (firebaseAuth) {
+                const result = await firebaseLogout();
+                if (!result.success) {
+                    console.error("Erreur de déconnexion Firebase:", result.error);
+                }
+            }
+            
+            // Déconnexion mode démo
             const activeSession = authData.sessions.find(session => session.active);
             if (activeSession) {
                 activeSession.active = false;
@@ -4005,16 +4339,45 @@
         }
 
         // Créer le compte
-        function createAccount() {
-            const userId = authData.registeredUsers.length + 1;
-            const newUser = {
-                id: userId,
-                email: registerEmail.value.trim(),
+        async function createAccount() {
+            const email = registerEmail.value.trim();
+            const password = registerPassword.value;
+            const userData = {
                 username: registerUsername.value.trim(),
-                password: registerPassword.value,
                 name: registerName.value.trim(),
                 bio: registerBio.value.trim() || "Nouvel utilisateur sur MalGaz-Hub",
                 avatar: selectedAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(registerName.value.trim())}&background=${getRandomColor()}&color=fff&size=128`,
+                birthdate: registerBirthdate.value,
+                gender: registerGender.value,
+                interests: selectedInterests
+            };
+            
+            // Essayer Firebase d'abord
+            if (firebaseAuth) {
+                const result = await firebaseEmailSignup(email, password, userData);
+                
+                if (result.success) {
+                    // Succès Firebase
+                    document.getElementById('registerStep3Loading').classList.remove('active');
+                    completeRegistrationBtn.disabled = false;
+                    
+                    document.getElementById('registerStep3').classList.add('hidden');
+                    document.getElementById('registerSuccess').classList.remove('hidden');
+                    
+                    return;
+                } else {
+                    // Échec Firebase, continuer avec mode démo
+                    console.log("Échec Firebase, création mode démo");
+                }
+            }
+            
+            // Mode démo (fallback)
+            const userId = authData.registeredUsers.length + 1;
+            const newUser = {
+                id: userId,
+                email: email,
+                password: password,
+                ...userData,
                 posts: 0,
                 followers: 0,
                 following: 0,
@@ -4022,9 +4385,6 @@
                 followingUsers: [],
                 likedPosts: [],
                 story: null,
-                birthdate: registerBirthdate.value,
-                gender: registerGender.value,
-                interests: selectedInterests,
                 verified: false,
                 createdAt: new Date()
             };
@@ -4053,7 +4413,15 @@
 
         // Finaliser l'inscription
         function completeRegistration() {
-            const user = authData.registeredUsers.find(u => u.email === registerEmail.value.trim());
+            const email = registerEmail.value.trim();
+            
+            if (firebaseAuth) {
+                // Firebase gère la redirection automatiquement via onAuthStateChanged
+                return;
+            }
+            
+            // Mode démo
+            const user = authData.registeredUsers.find(u => u.email === email);
             if (user) {
                 loginUser(user);
             }
@@ -4186,6 +4554,26 @@
                 return;
             }
             
+            // Essayer Firebase d'abord
+            if (firebaseAuth) {
+                document.getElementById('forgotPasswordLoading').classList.add('active');
+                sendResetLinkBtn.disabled = true;
+                
+                const result = await firebaseResetPassword(email);
+                
+                document.getElementById('forgotPasswordLoading').classList.remove('active');
+                sendResetLinkBtn.disabled = false;
+                
+                if (result.success) {
+                    showNotification(`Email de réinitialisation envoyé à ${email}`);
+                    showLoginForm();
+                    return;
+                } else {
+                    console.log("Échec Firebase, tentative mode démo");
+                }
+            }
+            
+            // Mode démo
             const userExists = authData.registeredUsers.some(u => u.email === email);
             
             document.getElementById('forgotPasswordLoading').classList.add('active');
@@ -4381,7 +4769,10 @@
             strengthLabel.textContent = label;
         }
 
-        // Fonctions utilitaires
+        // ==============================
+        // FONCTIONS UTILITAIRES
+        // ==============================
+
         function showError(elementId, message) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -4487,9 +4878,7 @@
 
         // Initialiser les données utilisateur
         function initUserData() {
-            if (!authData.currentUser) return;
-            
-            appData.currentUser = authData.currentUser;
+            if (!appData.currentUser) return;
             
             appData.users.forEach(user => {
                 if (!user.avatar) {
@@ -4534,6 +4923,10 @@
             const colors = ['ff2d55', '5856d6', '32d74b', 'ff9500', 'ffcc00', '5ac8fa', '007aff'];
             return colors[Math.floor(Math.random() * colors.length)];
         }
+
+        // ==============================
+        // FONCTIONS DE L'APPLICATION
+        // ==============================
 
         // Générer les stories améliorées
         function generateStories() {
@@ -5781,6 +6174,10 @@
             });
         }
 
+        // ==============================
+        // FONCTIONS CAMÉRA ET MÉDIAS
+        // ==============================
+
         // Configurer la caméra
         async function setupCamera() {
             try {
@@ -6251,7 +6648,10 @@
             });
         }
 
+        // ==============================
         // MESSAGERIE
+        // ==============================
+
         function generateConversationsList() {
             conversationsList.innerHTML = '';
             
@@ -6596,7 +6996,10 @@
             showScrollIndicator();
         }
 
-        // Gestion du tactile mobile
+        // ==============================
+        // GESTION DU TOUCHER MOBILE
+        // ==============================
+
         document.addEventListener('touchstart', function(e) {
             if (e.touches.length > 1) e.preventDefault();
         }, { passive: false });
@@ -6637,4 +7040,4 @@
         });
     </script>
 </body>
-                    </html>
+    </html>
